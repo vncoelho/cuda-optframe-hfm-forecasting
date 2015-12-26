@@ -14,6 +14,8 @@
 
 #include "ProblemInstance.hpp"
 
+#include "CUDAEval.h"
+
 #define EPSILON_EFP 0.0001
 
 namespace EFP
@@ -169,7 +171,7 @@ public:
 		}
 
 	}
-
+/*
 	void approximationsEnayatifar(const int& aprox, const double& alpha, const vector<double>& vAlpha, const vector<double>& vIndexAlphas, vector<int>& vIndex, double& estimation, const int i, const int pa, const vector<vector<double> >& vForecastings, const vector<double>& predicteds, const int& maxLag)
 	{
 		if (aprox == 1)
@@ -322,7 +324,7 @@ public:
 			estimation = estimation + ajusts;
 
 		}
-	}
+	}*/
 
 	vector<double> returnForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings, int begin)
 	{
@@ -426,15 +428,15 @@ public:
 			if (accepted > 0)
 				estimation /= accepted;
 
-			if (aprox != 0)
-			{
-				double alpha = rep.alpha;
-				vector<double> vAlpha = rep.vAlpha;
-				vector<double> vIndexAlphas = rep.vIndexAlphas;
-				vector<int> vIndex = rep.vIndex;
-
-				approximationsEnayatifar(aprox, alpha, vAlpha, vIndexAlphas, vIndex, estimation, begin, pa, vForecastings, predicteds, maxLag);
-			}
+//			if (aprox != 0)
+//			{
+//				double alpha = rep.alpha;
+//				vector<double> vAlpha = rep.vAlpha;
+//				vector<double> vIndexAlphas = rep.vIndexAlphas;
+//				vector<int> vIndex = rep.vIndex;
+//
+//				approximationsEnayatifar(aprox, alpha, vAlpha, vIndexAlphas, vIndex, estimation, begin, pa, vForecastings, predicteds, maxLag);
+//			}
 
 			//				Remove this for other forecast problem -- rain forecast
 			//				if (estimation < 0)
@@ -701,15 +703,15 @@ public:
 				if (accepted > 0)
 					estimation /= accepted;
 
-				if (aprox != 0)
-				{
-					double alpha = rep.alpha;
-					vector<double> vAlpha = rep.vAlpha;
-					vector<double> vIndexAlphas = rep.vIndexAlphas;
-					vector<int> vIndex = rep.vIndex;
-
-					approximationsEnayatifar(aprox, alpha, vAlpha, vIndexAlphas, vIndex, estimation, i, pa, vForecastings, predicteds, maxLag);
-				}
+//				if (aprox != 0)
+//				{
+//					double alpha = rep.alpha;
+//					vector<double> vAlpha = rep.vAlpha;
+//					vector<double> vIndexAlphas = rep.vIndexAlphas;
+//					vector<int> vIndex = rep.vIndex;
+//
+//					approximationsEnayatifar(aprox, alpha, vAlpha, vIndexAlphas, vIndex, estimation, i, pa, vForecastings, predicteds, maxLag);
+//				}
 
 //				Remove this for other forecast problem -- rain forecast
 //				if (estimation < 0)
@@ -1047,15 +1049,15 @@ public:
 			if (accepted > 0)
 				estimation /= accepted;
 
-			if (aprox != 0)
-			{
-				double alpha = rep.alpha;
-				vector<double> vAlpha = rep.vAlpha;
-				vector<double> vIndexAlphas = rep.vIndexAlphas;
-				vector<int> vIndex = rep.vIndex;
-
-				approximationsEnayatifar(aprox, alpha, vAlpha, vIndexAlphas, vIndex, estimation, i, pa, vForecastings, predicteds, maxLag);
-			}
+//			if (aprox != 0)
+//			{
+//				double alpha = rep.alpha;
+//				vector<double> vAlpha = rep.vAlpha;
+//				vector<double> vIndexAlphas = rep.vIndexAlphas;
+//				vector<int> vIndex = rep.vIndex;
+//
+//				approximationsEnayatifar(aprox, alpha, vAlpha, vIndexAlphas, vIndex, estimation, i, pa, vForecastings, predicteds, maxLag);
+//			}
 
 			predicteds.push_back(estimation);
 

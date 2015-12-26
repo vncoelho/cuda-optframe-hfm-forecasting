@@ -10,6 +10,8 @@
 #include "../../../OptFrame/RandGen.hpp"
 #include "../../../OptFrame/Util/RandGenMersenneTwister.hpp"
 
+#include "test.cuh"
+
 using namespace std;
 using namespace optframe;
 using namespace EFP;
@@ -17,6 +19,12 @@ using namespace EFP;
 int microGridLiuAppliedEnergy(int argc, char **argv)
 {
 	cout << "Welcome to Micro Grid Liu Applied Energy Dataset Calibration Mode..." << endl;
+
+	dotest();
+
+	getchar();
+	getchar();
+
 	RandGenMersenneTwister rg;
 	//long  1412730737
 	long seed = time(NULL); //CalibrationMode
