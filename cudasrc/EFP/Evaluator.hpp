@@ -8,6 +8,7 @@
 
 #include "../../OptFrame/Evaluation.hpp"
 #include "../../OptFrame/Evaluator.hpp"
+#include "../../OptFrame/Timer.hpp"
 
 #include "Representation.h"
 #include "Solution.h"
@@ -330,8 +331,8 @@ public:
 	vector<double> returnForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings, int begin)
 	{
 		int sizeSP = rep.singleIndex.size();
-		int sizeMP = rep.averageIndex.size();
-		int sizeDP = rep.derivativeIndex.size();
+//		int sizeMP = rep.averageIndex.size();
+//		int sizeDP = rep.derivativeIndex.size();
 
 		int nForTargetFile = vForecastings[0].size();
 		int maxLag = problemParam.getMaxLag();
@@ -452,6 +453,8 @@ public:
 
 	vector<double> returnTrainingSetForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings)
 	{
+
+		Timer t;
 		int nForTargetFile = vForecastings[0].size();
 		int maxLag = problemParam.getMaxLag();
 		int nSamples = nForTargetFile - maxLag;
@@ -475,13 +478,19 @@ public:
 
 		// CALL GPU!!!
 		cout << "CPU finished with " << allForecasts.size() << " VALUES!" << endl;
+		cout << "CPU: " << t.inMilliSecs() << " ms" << endl;
 		cout << "CALL GPU!" << endl;
+		Timer tgpu;
 		vector<double> vgpu = gpuTrainingSetForecasts(rep, vForecastings, maxLag, stepsAhead, aprox);
 		cout << "GPU finished with " << vgpu.size() << " VALUES!" << endl;
+		cout << "GPU: " << tgpu.inMilliSecs() << " ms" << endl;
 		assert(allForecasts.size() == vgpu.size());
 
-		cout << "CPU: " << allForecasts << endl;
-		cout << "GPU: " << vgpu << endl;
+		if (allForecasts.size() <= 500)
+		{
+			cout << "CPU: " << allForecasts << endl;
+			cout << "GPU: " << vgpu << endl;
+		}
 		getchar();
 		getchar();
 

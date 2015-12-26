@@ -71,13 +71,13 @@ __host__ void transferRep(const RepEFP& rep, CUDARep& cudarep)
 	cudarep.h_singleIndex = new val2[cudarep.size];
 	cudarep.h_singleFuzzyRS = new val6[cudarep.size];
 
-	for (unsigned i = 0; i < rep.singleIndex.size(); i++)
+	for (unsigned i = 0; i < cudarep.size; i++)
 	{
 		cudarep.h_singleIndex[i].v1 = rep.singleIndex[i].first;
 		cudarep.h_singleIndex[i].v2 = rep.singleIndex[i].second;
 	}
 
-	for (unsigned i = 0; i < rep.singleIndex.size(); i++)
+	for (unsigned i = 0; i < cudarep.size; i++)
 	{
 		cudarep.h_singleFuzzyRS[i].GREATER = rep.singleFuzzyRS[i][GREATER];
 		cudarep.h_singleFuzzyRS[i].GREATER_WEIGHT = rep.singleFuzzyRS[i][GREATER_WEIGHT];
@@ -90,7 +90,7 @@ __host__ void transferRep(const RepEFP& rep, CUDARep& cudarep)
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) &cudarep.d_singleIndex, sizeof(val2) * cudarep.size));
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) &cudarep.d_singleFuzzyRS, sizeof(val6) * cudarep.size));
 	CUDA_CHECK_RETURN(cudaMemcpy(cudarep.d_singleIndex, cudarep.h_singleIndex, sizeof(val2) * cudarep.size, cudaMemcpyHostToDevice));
-	CUDA_CHECK_RETURN(cudaMemcpy(cudarep.d_singleFuzzyRS, cudarep.h_singleFuzzyRS, sizeof(val2) * cudarep.size, cudaMemcpyHostToDevice));
+	CUDA_CHECK_RETURN(cudaMemcpy(cudarep.d_singleFuzzyRS, cudarep.h_singleFuzzyRS, sizeof(val6) * cudarep.size, cudaMemcpyHostToDevice));
 }
 
 __device__ void defuzzification(double ruleGreater, double greaterWeight, double ruleLower, double lowerWeight, double ruleEpsilon, FuzzyFunction fuzzyFunc, double value, double* estimation, double* greaterAccepted, double* lowerAccepted)
@@ -166,27 +166,33 @@ __host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dFore
 	int nForTargetFile = hfSize[0];
 	int nSamples = nForTargetFile - maxLag;
 
-	int nThreads = ceil(nSamples / stepsAhead);
+	int nThreads = ceil(nSamples / float(stepsAhead));
+
+
+	int threadsPerBlock = 256; // tx
+	int blocks = ceil(nThreads / float(threadsPerBlock));
 
 	cout << "nForTargetFile=" << nForTargetFile << endl;
+	cout << "maxLag=" << maxLag << endl;
 	cout << "nSamples=" << nSamples << endl;
 	cout << "stepsAhead=" << stepsAhead << endl;
 	cout << "nThreads=" << nThreads << endl;
+	cout << "threadsPerBlock=" << threadsPerBlock << endl;
+	cout << "blocks=" << blocks << endl;
 
-	int threadsPerBlock = 1024; // tx
 
-	if (nThreads > threadsPerBlock)
-	{
-		printf("ERROR! MORE THAN %d threads per block! TOTAL: %d\n", threadsPerBlock, nThreads);
-		exit(1);
-	}
+//	if (nThreads > threadsPerBlock)
+//	{
+//		printf("ERROR! MORE THAN %d threads per block! TOTAL: %d\n", threadsPerBlock, nThreads);
+//		exit(1);
+//	}
 
 	int rsize = nThreads * stepsAhead;
 	float* hrForecasts = new float[rsize];
 	float* predicted;
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) &predicted, sizeof(float) * rsize));
 
-	kernelForecasts<<<1, threadsPerBlock>>>(nThreads, cudarep, dForecastings, dfSize, maxLag, stepsAhead, aprox, predicted);
+	kernelForecasts<<<blocks, threadsPerBlock>>>(nThreads, cudarep, dForecastings, dfSize, maxLag, stepsAhead, aprox, predicted);
 
 	/*
 	 for (int i = maxLag; i < nForTargetFile; i += stepsAhead) // main loop that varries all the time series

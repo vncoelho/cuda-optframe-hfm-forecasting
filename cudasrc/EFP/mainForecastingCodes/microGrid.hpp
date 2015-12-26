@@ -73,16 +73,16 @@ int microGridLiuAppliedEnergy(int argc, char **argv)
 	//CONFIG FILES FOR CONSTRUTIVE 0 AND 1
 
 	vector<string> explanatoryVariables;
-
+	argvTargetTimeSeries = 1;
 	//DATA FROM LIU
 	string fileMicroGridA = "./MyProjects/HFM/Instance/microGridLiuAE/A";
-	string fileMicroGridB = "./MyProjects/HFM/Instance/microGridLiuAE/B";
+	string fileMicroGridB = "./MyProjects/HFM/Instance/microGridLiuAE/BNEW";
 	string fileMicroGridC = "./MyProjects/HFM/Instance/microGridLiuAE/C";
 	string fileMicroGridD = "./MyProjects/HFM/Instance/microGridLiuAE/D";
 
 	//TREATED DATA FROM LIU
 	string fileMicroGridAT = "INSTANCEmicroGridLiuAETreated/A";
-	string fileMicroGridBT = "INSTANCEmicroGridLiuAETreated/B";
+	string fileMicroGridBT = "INSTANCEmicroGridLiuAETreated/BNEW";
 	string fileMicroGridCT = "INSTANCEmicroGridLiuAETreated/C";
 	string fileMicroGridDT = "INSTANCEmicroGridLiuAETreated/D";
 	vector<string> vInstances;
@@ -189,8 +189,7 @@ int microGridLiuAppliedEnergy(int argc, char **argv)
 
 		int maxTrainningRounds = 20;
 		int nTrainningRounds = rg.rand(maxTrainningRounds) + 1;
-		nTrainningRounds = 20
-				;
+		nTrainningRounds = 20000;
 		int nTotalForecastingsTrainningSet = maxLag + nTrainningRounds * stepsAhead;
 
 		int beginTrainingSet = 672;

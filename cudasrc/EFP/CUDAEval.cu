@@ -17,11 +17,13 @@ __global__ void kernelForecasts(int nThreads, CUDARep cudarep, float* dForecasti
 {
 	int sizeSP = cudarep.size; //rep.singleIndex.size();
 
-	int begin = threadIdx.x;
-	if (begin >= nThreads)
+	int tidx = threadIdx.x + blockIdx.x*blockDim.x;
+	if (tidx >= nThreads)
 		return;
 
-	int offset = begin * nThreads;
+	int offset = tidx * stepsAhead;
+
+	const int begin = maxLag + (tidx * stepsAhead) ;
 
 	//int nForTargetFile = dfSize[0]; //vForecastings[0].size();
 
@@ -51,7 +53,7 @@ __global__ void kernelForecasts(int nThreads, CUDARep cudarep, float* dForecasti
 			else
 			{
 				if ((begin + pa - K) < dfSize[file])
-					singleValue = dForecastings[begin + pa - K]; // FILE ALWAYS ZERO!
+					singleValue = dForecastings[begin + pa - K]; // FILE ALWAYS ZERO! TODO
 				else
 					singleValue = 0;
 			}
