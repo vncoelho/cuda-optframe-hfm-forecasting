@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <iostream>
+#include <assert.h>
 
 #include "CUDAEval.h"
 
@@ -31,12 +32,12 @@ struct val2
 
 struct val6
 {
-	double GREATER; // = 0; // A
-	double GREATER_WEIGHT; // = 1; // V
-	double LOWER; // = 2; // B
-	double LOWER_WEIGHT; // = 3; // W
-	double EPSILON; // = 4; // E
-	double PERTINENCEFUNC; // = 5; // Pertinence function index
+	float GREATER; // = 0; // A
+	float GREATER_WEIGHT; // = 1; // V
+	float LOWER; // = 2; // B
+	float LOWER_WEIGHT; // = 3; // W
+	float EPSILON; // = 4; // E
+	float PERTINENCEFUNC; // = 5; // Pertinence function index
 };
 
 struct CUDARep
@@ -53,6 +54,8 @@ struct CUDARep
 	val6* h_singleFuzzyRS;
 	val6* d_singleFuzzyRS;
 
+	int datasize; // forecastings
+
 	//vector<vector<pair<int, int> > > averageIndex;
 	//vector<vector<double> > averageFuzzyRS;
 	//val6* averageFuzzyRS;
@@ -61,6 +64,7 @@ struct CUDARep
 	//vector<vector<double> > derivativeFuzzyRS;
 	//val6* derivativeFuzzyRS;
 };
+
 
 __host__ void transferRep(const RepEFP& rep, CUDARep& cudarep)
 {
@@ -84,26 +88,109 @@ __host__ void transferRep(const RepEFP& rep, CUDARep& cudarep)
 		cudarep.h_singleFuzzyRS[i].PERTINENCEFUNC = rep.singleFuzzyRS[i][PERTINENCEFUNC];
 	}
 
-	CUDA_CHECK_RETURN(cudaMalloc((void**) &cudarep.d_singleIndex, sizeof(val2) * cudarep.size));
-	CUDA_CHECK_RETURN(cudaMalloc((void**) &cudarep.d_singleFuzzyRS, sizeof(val6) * cudarep.size));
+	CUDA_CHECK_RETURN(cudaMalloc((void** ) &cudarep.d_singleIndex, sizeof(val2) * cudarep.size));
+	CUDA_CHECK_RETURN(cudaMalloc((void** ) &cudarep.d_singleFuzzyRS, sizeof(val6) * cudarep.size));
 	CUDA_CHECK_RETURN(cudaMemcpy(cudarep.d_singleIndex, cudarep.h_singleIndex, sizeof(val2) * cudarep.size, cudaMemcpyHostToDevice));
 	CUDA_CHECK_RETURN(cudaMemcpy(cudarep.d_singleFuzzyRS, cudarep.h_singleFuzzyRS, sizeof(val2) * cudarep.size, cudaMemcpyHostToDevice));
 }
 
-__device__ int getKValue(const int K, const int file, const int i, const int pa, const vector<vector<double> >& vForecastings, const vector<double>& predicteds);
 
-__device__ void defuzzification(double ruleGreater, double greaterWeight, double ruleLower, double lowerWeight, double ruleEpsilon, FuzzyFunction fuzzyFunc, double value, double& estimation, double& greaterAccepeted, double& lowerAccepted);
+__device__ void defuzzification(double ruleGreater, double greaterWeight, double ruleLower, double lowerWeight, double ruleEpsilon, FuzzyFunction fuzzyFunc, double value, double* estimation, double* greaterAccepted, double* lowerAccepted)
+{
 
-__host__ vector<double> returnForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings, int begin, int maxLag, int stepsAhead, const int aprox);
+	if (fuzzyFunc == Heavisde)
+	{
+		if (value > ruleGreater)
+		{
+			*estimation += greaterWeight;
+			*greaterAccepted += 1;
+		}
 
-__host__ vector<double> returnTrainingSetForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings, int maxLag, int stepsAhead, const int aprox);
+		if (value < ruleLower)
+		{
+			*estimation += lowerWeight;
+			*lowerAccepted += 1;
+		}
+
+	}
+
+	double epsilon = ruleEpsilon;
+	//Trapezoid Function
+	if (fuzzyFunc == Trapezoid)
+	{
+		double est = 0;
+		double a = ruleGreater;
+		double mu = 0;
+		if (value <= (a - epsilon))
+			mu = 0;
+		if (value > a)
+			mu = 1;
+		if ((value > (a - epsilon)) && value <= a)
+		{
+			double K1 = 1 / epsilon;
+			double K2 = 1 - a * K1;
+			mu = value * K1 + K2;
+		}
+
+		est = greaterWeight * mu;
+		*estimation += est;
+
+		*greaterAccepted += mu;
+	}
+
+	if (fuzzyFunc == Trapezoid)
+	{
+		double b = ruleLower;
+		double est = 0;
+		double mu = 0;
+		if (value >= (b + epsilon))
+			mu = 0;
+		if (value < b)
+			mu = 1;
+		if (value >= b && value < b + epsilon)
+		{
+			double K1 = 1 / epsilon;
+			double K2 = 1 - b * K1;
+			mu = value * K1 + K2;
+		}
+		est = lowerWeight * mu;
+		*estimation += est;
+
+		*lowerAccepted += mu;
+	}
+}
+
+
+__host__ vector<double> returnForecasts(CUDARep cudarep, float* dForecastings, int begin, int maxLag, int stepsAhead, const int aprox);
+
+__host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dForecastings, int maxLag, int stepsAhead, const int aprox);
 
 vector<double> gpuTrainingSetForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings, int maxLag, int stepsAhead, const int aprox)
 {
 	CUDARep cudarep;
 	transferRep(rep, cudarep);
 
-	return returnTrainingSetForecasts(rep, vForecastings, maxLag, stepsAhead, aprox);
+	int datasize = 0;
+	int* fSize = new int[vForecastings.size()];
+	for (unsigned i = 0; i < vForecastings.size(); i++)
+	{
+		fSize[i] = vForecastings[i].size();
+		datasize += fSize[i];
+	}
+
+	float* hForecastings = new float[datasize];
+	int k = 0;
+	for (unsigned i = 0; i < vForecastings.size(); i++)
+		for (unsigned j = 0; j < vForecastings[i].size(); j++)
+			hForecastings[k++] = vForecastings[i][j];
+
+	assert(k == datasize); // verify that all data is copied
+
+	float* dForecastings;
+	CUDA_CHECK_RETURN(cudaMalloc((void** ) &dForecastings, sizeof(float) * datasize));
+	CUDA_CHECK_RETURN(cudaMemcpy(dForecastings, hForecastings, sizeof(float) * datasize, cudaMemcpyHostToDevice));
+
+	return returnTrainingSetForecasts(cudarep, dForecastings, maxLag, stepsAhead, aprox);
 }
 
 #endif /* CUDAEVAL_CUH_ */

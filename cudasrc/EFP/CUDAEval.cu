@@ -14,100 +14,9 @@
 
 static const int WORK_SIZE = 256;
 
-
-
-__device__ int getKValue(const int K, const int file, const int i, const int pa, const vector<vector<double> >& vForecastings, const vector<double>& predicteds)
-{
-	double value = 0;
-
-	if ((pa >= K) && (file == 0) && (K > 0))
-	{
-		value = predicteds[pa - K];
-	}
-	else
-	{
-		if ((i + pa - K) < vForecastings[file].size())
-			value = vForecastings[file][i + pa - K];
-		else
-			value = 0;
-	}
-
-	return value;
-}
-
-
-__device__ void defuzzification(double ruleGreater, double greaterWeight, double ruleLower, double lowerWeight, double ruleEpsilon, FuzzyFunction fuzzyFunc, double value, double& estimation, double& greaterAccepeted, double& lowerAccepted)
-{
-
-	if (fuzzyFunc == Heavisde)
-	{
-		if (value > ruleGreater)
-		{
-			estimation += greaterWeight;
-			greaterAccepeted += 1;
-		}
-
-		if (value < ruleLower)
-		{
-			estimation += lowerWeight;
-			lowerAccepted += 1;
-		}
-
-	}
-
-	double epsilon = ruleEpsilon;
-	//Trapezoid Function
-	if (fuzzyFunc == Trapezoid)
-	{
-		double est = 0;
-		double a = ruleGreater;
-		double mu = 0;
-		if (value <= (a - epsilon))
-			mu = 0;
-		if (value > a)
-			mu = 1;
-		if ((value > (a - epsilon)) && value <= a)
-		{
-			double K1 = 1 / epsilon;
-			double K2 = 1 - a * K1;
-			mu = value * K1 + K2;
-		}
-
-		est = greaterWeight * mu;
-		estimation += est;
-
-		greaterAccepeted += mu;
-	}
-
-	if (fuzzyFunc == Trapezoid)
-	{
-		double b = ruleLower;
-		double est = 0;
-		double mu = 0;
-		if (value >= (b + epsilon))
-			mu = 0;
-		if (value < b)
-			mu = 1;
-		if (value >= b && value < b + epsilon)
-		{
-			double K1 = 1 / epsilon;
-			double K2 = 1 - b * K1;
-			mu = value * K1 + K2;
-		}
-		est = lowerWeight * mu;
-		estimation += est;
-
-		lowerAccepted += mu;
-	}
-
-}
-
-
 vector<double> returnForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings, int begin, int maxLag, int stepsAhead, const int aprox)
 {
 	int sizeSP = rep.singleIndex.size();
-	int sizeMP = rep.averageIndex.size();
-	int sizeDP = rep.derivativeIndex.size();
 
 	int nForTargetFile = vForecastings[0].size();
 
@@ -127,7 +36,21 @@ vector<double> returnForecasts(const RepEFP& rep, const vector<vector<double> >&
 			int file = rep.singleIndex[nSP].first;
 			int K = rep.singleIndex[nSP].second;
 
-			double singleValue = getKValue(K, file, begin, pa, vForecastings, predicteds);
+			// BEGIN GET K VALUE
+			// getKValue(K, file, begin, pa, vForecastings, predicteds);
+			double singleValue;
+			if ((pa >= K) && (file == 0) && (K > 0))
+			{
+				singleValue = predicteds[pa - K];
+			}
+			else
+			{
+				if ((begin + pa - K) < vForecastings[file].size())
+					singleValue = vForecastings[file][begin + pa - K];
+				else
+					singleValue = 0;
+			}
+			// END GET K VALUE
 
 			double ruleGreater = rep.singleFuzzyRS[nSP][GREATER];
 			double greaterWeight = rep.singleFuzzyRS[nSP][GREATER_WEIGHT];
@@ -136,67 +59,9 @@ vector<double> returnForecasts(const RepEFP& rep, const vector<vector<double> >&
 			double ruleEpsilon = rep.singleFuzzyRS[nSP][EPSILON];
 			FuzzyFunction repFuzzyPertinenceFunc = FuzzyFunction(rep.singleFuzzyRS[nSP][PERTINENCEFUNC]);
 
-			defuzzification(ruleGreater, greaterWeight, ruleLower, lowerWeight, ruleEpsilon, repFuzzyPertinenceFunc, singleValue, estimation, greaterAccepeted, lowerAccepted);
+			defuzzification(ruleGreater, greaterWeight, ruleLower, lowerWeight, ruleEpsilon, repFuzzyPertinenceFunc, singleValue, &estimation, &greaterAccepeted, &lowerAccepted);
 
 			//fuzzyWeights.push_back(value);
-		}
-
-		for (int nMP = 0; nMP < sizeMP; nMP++)
-		{
-			vector < pair<int, int> > meansK = rep.averageIndex[nMP];
-			int nAveragePoints = meansK.size();
-
-			double mean = 0;
-			for (int mK = 0; mK < nAveragePoints; mK++)
-			{
-				int file = meansK[mK].first;
-				int K = meansK[mK].second;
-
-				mean += getKValue(K, file, begin, pa, vForecastings, predicteds);
-			}
-
-			mean = mean / nAveragePoints;
-
-			double ruleGreater = rep.averageFuzzyRS[nMP][GREATER];
-			double greaterWeight = rep.averageFuzzyRS[nMP][GREATER_WEIGHT];
-			double ruleLower = rep.averageFuzzyRS[nMP][LOWER];
-			double lowerWeight = rep.averageFuzzyRS[nMP][LOWER_WEIGHT];
-			double ruleEpsilon = rep.averageFuzzyRS[nMP][EPSILON];
-			FuzzyFunction repFuzzyPertinenceFunc = FuzzyFunction(rep.averageFuzzyRS[nMP][PERTINENCEFUNC]);
-
-			defuzzification(ruleGreater, greaterWeight, ruleLower, lowerWeight, ruleEpsilon, repFuzzyPertinenceFunc, mean, estimation, greaterAccepeted, lowerAccepted);
-
-			//fuzzyWeights.push_back(mean);
-		}
-
-		for (int nDP = 0; nDP < sizeDP; nDP++)
-		{
-			vector < pair<int, int> > derivateK = rep.derivativeIndex[nDP];
-
-			double d = 0;
-			for (int dK = 0; dK < derivateK.size(); dK++)
-			{
-				int file = derivateK[dK].first;
-				int K = derivateK[dK].second;
-
-				double value = getKValue(K, file, begin, pa, vForecastings, predicteds);
-
-				if (dK == 0)
-					d += value;
-				else
-					d -= value;
-			}
-
-			//fuzzyWeights.push_back(d);
-
-			double ruleGreater = rep.derivativeFuzzyRS[nDP][GREATER];
-			double greaterWeight = rep.derivativeFuzzyRS[nDP][GREATER_WEIGHT];
-			double ruleLower = rep.derivativeFuzzyRS[nDP][LOWER];
-			double lowerWeight = rep.derivativeFuzzyRS[nDP][LOWER_WEIGHT];
-			double ruleEpsilon = rep.derivativeFuzzyRS[nDP][EPSILON];
-			FuzzyFunction repFuzzyPertinenceFunc = FuzzyFunction(rep.derivativeFuzzyRS[nDP][PERTINENCEFUNC]);
-
-			defuzzification(ruleGreater, greaterWeight, ruleLower, lowerWeight, ruleEpsilon, repFuzzyPertinenceFunc, d, estimation, greaterAccepeted, lowerAccepted);
 		}
 
 		//cout << "EstimationAntes:" << estimation << endl;
@@ -214,7 +79,6 @@ vector<double> returnForecasts(const RepEFP& rep, const vector<vector<double> >&
 
 	return predicteds;
 }
-
 
 vector<double> returnTrainingSetForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings, int maxLag, int stepsAhead, const int aprox)
 {
@@ -241,17 +105,13 @@ vector<double> returnTrainingSetForecasts(const RepEFP& rep, const vector<vector
 	return allForecasts;
 }
 
-
-
-
-
 /**
  * This macro checks return value of the CUDA runtime call and exits
  * the application if the call failed.
  */
 
-
-__host__ __device__ unsigned int bitreverse1(unsigned int number) {
+__host__ __device__ unsigned int bitreverse1(unsigned int number)
+{
 	number = ((0xf0f0f0f0 & number) >> 4) | ((0x0f0f0f0f & number) << 4);
 	number = ((0xcccccccc & number) >> 2) | ((0x33333333 & number) << 2);
 	number = ((0xaaaaaaaa & number) >> 1) | ((0x55555555 & number) << 1);
@@ -261,7 +121,8 @@ __host__ __device__ unsigned int bitreverse1(unsigned int number) {
 /**
  * CUDA kernel function that reverses the order of bits in each element of the array.
  */
-__global__ void bitreverse1(void *data) {
+__global__ void bitreverse1(void *data)
+{
 	unsigned int *idata = (unsigned int*) data;
 	idata[threadIdx.x] = bitreverse1(idata[threadIdx.x]);
 }
@@ -269,7 +130,8 @@ __global__ void bitreverse1(void *data) {
 /**
  * Host function that prepares data array and passes it to the CUDA kernel.
  */
-int testx(void) {
+int testx(void)
+{
 	void *d = NULL;
 	int i;
 	unsigned int idata[WORK_SIZE], odata[WORK_SIZE];
@@ -277,9 +139,8 @@ int testx(void) {
 	for (i = 0; i < WORK_SIZE; i++)
 		idata[i] = (unsigned int) i;
 
-	CUDA_CHECK_RETURN(cudaMalloc((void**) &d, sizeof(int) * WORK_SIZE));
-	CUDA_CHECK_RETURN(
-			cudaMemcpy(d, idata, sizeof(int) * WORK_SIZE, cudaMemcpyHostToDevice));
+	CUDA_CHECK_RETURN(cudaMalloc((void** ) &d, sizeof(int) * WORK_SIZE));
+	CUDA_CHECK_RETURN(cudaMemcpy(d, idata, sizeof(int) * WORK_SIZE, cudaMemcpyHostToDevice));
 
 	bitreverse1<<<1, WORK_SIZE, WORK_SIZE * sizeof(int)>>>(d);
 
@@ -288,10 +149,9 @@ int testx(void) {
 	CUDA_CHECK_RETURN(cudaMemcpy(odata, d, sizeof(int) * WORK_SIZE, cudaMemcpyDeviceToHost));
 
 	for (i = 0; i < WORK_SIZE; i++)
-		printf("Input value: %u, device output: %u, host output: %u\n",
-				idata[i], odata[i], bitreverse1(idata[i]));
+		printf("Input value: %u, device output: %u, host output: %u\n", idata[i], odata[i], bitreverse1(idata[i]));
 
-	CUDA_CHECK_RETURN(cudaFree((void*) d));
+	CUDA_CHECK_RETURN(cudaFree((void* ) d));
 	CUDA_CHECK_RETURN(cudaDeviceReset());
 
 	return 0;
