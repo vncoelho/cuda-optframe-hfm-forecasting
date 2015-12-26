@@ -159,7 +159,7 @@ __device__ void defuzzification(double ruleGreater, double greaterWeight, double
 }
 
 //__host__ vector<double> returnForecasts(CUDARep cudarep, float* dForecastings, int begin, int maxLag, int stepsAhead, const int aprox);
-__global__ void kernelForecasts(CUDARep cudarep, float* dForecastings, int maxLag, int stepsAhead, const int aprox, float* rForecasts);
+__global__ void kernelForecasts(int nThreads, CUDARep cudarep, float* dForecastings, int* dfSize, int maxLag, int stepsAhead, const int aprox, float* predicted);
 
 __host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dForecastings, int* dfSize, int* hfSize, int maxLag, int stepsAhead, const int aprox)
 {
@@ -181,12 +181,12 @@ __host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dFore
 		exit(1);
 	}
 
-	int rsize = maxLag + nThreads * stepsAhead;
+	int rsize = nThreads * stepsAhead;
 	float* hrForecasts = new float[rsize];
-	float* drForecasts;
-	CUDA_CHECK_RETURN(cudaMalloc((void** ) &drForecasts, sizeof(float) * rsize));
+	float* predicted;
+	CUDA_CHECK_RETURN(cudaMalloc((void** ) &predicted, sizeof(float) * rsize));
 
-	kernelForecasts<<<1, threadsPerBlock>>>(cudarep, dForecastings, maxLag, stepsAhead, aprox, drForecasts);
+	kernelForecasts<<<1, threadsPerBlock>>>(nThreads, cudarep, dForecastings, dfSize, maxLag, stepsAhead, aprox, predicted);
 
 	/*
 	 for (int i = maxLag; i < nForTargetFile; i += stepsAhead) // main loop that varries all the time series
@@ -198,11 +198,14 @@ __host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dFore
 	 }
 	 */
 
-	CUDA_CHECK_RETURN(cudaMemcpy(hrForecasts, drForecasts, sizeof(float) * rsize, cudaMemcpyDeviceToHost));
+	CUDA_CHECK_RETURN(cudaThreadSynchronize());	// Wait for the GPU launched work to complete
+	CUDA_CHECK_RETURN(cudaGetLastError());
+
+	CUDA_CHECK_RETURN(cudaMemcpy(hrForecasts, predicted, sizeof(float) * rsize, cudaMemcpyDeviceToHost));
 
 	vector<double> allForecasts;
 
-	for (unsigned k = maxLag; k < nThreads * stepsAhead; k++)
+	for (unsigned k = 0; k < rsize; k++)
 		allForecasts.push_back(hrForecasts[k]);
 
 	//TODO do it in a better style
@@ -244,7 +247,11 @@ vector<double> gpuTrainingSetForecasts(const RepEFP& rep, const vector<vector<do
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) &dfSize, sizeof(int) * vForecastings.size()));
 	CUDA_CHECK_RETURN(cudaMemcpy(dfSize, hfSize, sizeof(int) * vForecastings.size(), cudaMemcpyHostToDevice));
 
-	return returnTrainingSetForecasts(cudarep, dForecastings, dfSize, hfSize, maxLag, stepsAhead, aprox);
+	vector<double> vr = returnTrainingSetForecasts(cudarep, dForecastings, dfSize, hfSize, maxLag, stepsAhead, aprox);
+
+	CUDA_CHECK_RETURN(cudaDeviceReset());
+
+	return vr;
 }
 
 #endif /* CUDAEVAL_CUH_ */

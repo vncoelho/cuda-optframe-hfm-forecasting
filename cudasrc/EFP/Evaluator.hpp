@@ -4,6 +4,7 @@
 //#include <cmath>
 #include <stdlib.h>
 #include <math.h>
+#include <assert.h>
 
 #include "../../OptFrame/Evaluation.hpp"
 #include "../../OptFrame/Evaluator.hpp"
@@ -140,7 +141,7 @@ public:
 			{
 				double K1 = 1 / epsilon;
 				double K2 = 1 - a * K1;
-				double mu = value * K1 + K2;
+				mu = value * K1 + K2;
 			}
 
 			est = greaterWeight * mu;
@@ -162,7 +163,7 @@ public:
 			{
 				double K1 = 1 / epsilon;
 				double K2 = 1 - b * K1;
-				double mu = value * K1 + K2;
+				mu = value * K1 + K2;
 			}
 			est = lowerWeight * mu;
 			estimation += est;
@@ -171,160 +172,160 @@ public:
 		}
 
 	}
-/*
-	void approximationsEnayatifar(const int& aprox, const double& alpha, const vector<double>& vAlpha, const vector<double>& vIndexAlphas, vector<int>& vIndex, double& estimation, const int i, const int pa, const vector<vector<double> >& vForecastings, const vector<double>& predicteds, const int& maxLag)
-	{
-		if (aprox == 1)
-		{
-			double ajusts = 0;
-			vector<int> adjustPrevValue;
-			adjustPrevValue.push_back(1);
-			adjustPrevValue.push_back(2);
-			adjustPrevValue.push_back(24);
-			adjustPrevValue.push_back(25);
-			adjustPrevValue.push_back(167);
-			adjustPrevValue.push_back(168);
-			adjustPrevValue.push_back(169);
+	/*
+	 void approximationsEnayatifar(const int& aprox, const double& alpha, const vector<double>& vAlpha, const vector<double>& vIndexAlphas, vector<int>& vIndex, double& estimation, const int i, const int pa, const vector<vector<double> >& vForecastings, const vector<double>& predicteds, const int& maxLag)
+	 {
+	 if (aprox == 1)
+	 {
+	 double ajusts = 0;
+	 vector<int> adjustPrevValue;
+	 adjustPrevValue.push_back(1);
+	 adjustPrevValue.push_back(2);
+	 adjustPrevValue.push_back(24);
+	 adjustPrevValue.push_back(25);
+	 adjustPrevValue.push_back(167);
+	 adjustPrevValue.push_back(168);
+	 adjustPrevValue.push_back(169);
 
-			for (int ind = 0; ind < adjustPrevValue.size(); ind++)
-			{
-				int indexK = adjustPrevValue[ind];
-				double valueIndexK = 0;
-				if (indexK <= i)
-				{
-					if (pa >= indexK)
-						valueIndexK += predicteds[pa - indexK];
-					else
-						valueIndexK += vForecastings[targetFile][i + pa - indexK];
+	 for (int ind = 0; ind < adjustPrevValue.size(); ind++)
+	 {
+	 int indexK = adjustPrevValue[ind];
+	 double valueIndexK = 0;
+	 if (indexK <= i)
+	 {
+	 if (pa >= indexK)
+	 valueIndexK += predicteds[pa - indexK];
+	 else
+	 valueIndexK += vForecastings[targetFile][i + pa - indexK];
 
-					ajusts += alpha * (estimation - valueIndexK);
-				}
-			}
-			estimation = estimation + ajusts;
-		}
+	 ajusts += alpha * (estimation - valueIndexK);
+	 }
+	 }
+	 estimation = estimation + ajusts;
+	 }
 
-		if (aprox == 2)
-		{
-			double ajusts = 0;
-			vector<int> adjustPrevValue;
-			adjustPrevValue.push_back(1);
-			adjustPrevValue.push_back(2);
-			adjustPrevValue.push_back(3);
-			adjustPrevValue.push_back(23);
-			adjustPrevValue.push_back(24);
-			adjustPrevValue.push_back(25);
-			for (int ind = 0; ind < adjustPrevValue.size(); ind++)
-			{
-				int indexK = adjustPrevValue[ind];
-				double valueIndexK = 0;
-				if (indexK <= (i + pa))
-				{
-					if (pa >= indexK)
-						valueIndexK += predicteds[pa - indexK];
-					else
-					{
-						valueIndexK += vForecastings[targetFile][i + pa - indexK];
-					}
-					ajusts += vAlpha[ind] * (estimation - valueIndexK);
-				}
+	 if (aprox == 2)
+	 {
+	 double ajusts = 0;
+	 vector<int> adjustPrevValue;
+	 adjustPrevValue.push_back(1);
+	 adjustPrevValue.push_back(2);
+	 adjustPrevValue.push_back(3);
+	 adjustPrevValue.push_back(23);
+	 adjustPrevValue.push_back(24);
+	 adjustPrevValue.push_back(25);
+	 for (int ind = 0; ind < adjustPrevValue.size(); ind++)
+	 {
+	 int indexK = adjustPrevValue[ind];
+	 double valueIndexK = 0;
+	 if (indexK <= (i + pa))
+	 {
+	 if (pa >= indexK)
+	 valueIndexK += predicteds[pa - indexK];
+	 else
+	 {
+	 valueIndexK += vForecastings[targetFile][i + pa - indexK];
+	 }
+	 ajusts += vAlpha[ind] * (estimation - valueIndexK);
+	 }
 
-			}
+	 }
 
-			estimation = estimation + ajusts;
+	 estimation = estimation + ajusts;
 
-		}
+	 }
 
-		if (aprox == 3)
-		{
-			double ajusts = 0;
+	 if (aprox == 3)
+	 {
+	 double ajusts = 0;
 
-			for (int ind = 0; ind < vIndex.size(); ind++)
-			{
-				int indexK = vIndex[ind];
-				double valueIndexK = 0;
-				if (indexK <= i)
-				{
-					if (pa >= indexK)
-						valueIndexK += predicteds[pa - indexK];
-					else
-						valueIndexK += vForecastings[targetFile][i + pa - indexK];
+	 for (int ind = 0; ind < vIndex.size(); ind++)
+	 {
+	 int indexK = vIndex[ind];
+	 double valueIndexK = 0;
+	 if (indexK <= i)
+	 {
+	 if (pa >= indexK)
+	 valueIndexK += predicteds[pa - indexK];
+	 else
+	 valueIndexK += vForecastings[targetFile][i + pa - indexK];
 
-					ajusts += vIndexAlphas[ind] * (estimation - valueIndexK);
-					if ((vIndex[ind] <= 0) || (vIndex[ind] > maxLag))
-					{
-						cout << "vIndex[ind]:" << vIndex[ind] << "maxLag:" << maxLag << endl;
-						cout << "Erro on INDEX of the adjustment";
-						getchar();
-					}
-				}
+	 ajusts += vIndexAlphas[ind] * (estimation - valueIndexK);
+	 if ((vIndex[ind] <= 0) || (vIndex[ind] > maxLag))
+	 {
+	 cout << "vIndex[ind]:" << vIndex[ind] << "maxLag:" << maxLag << endl;
+	 cout << "Erro on INDEX of the adjustment";
+	 getchar();
+	 }
+	 }
 
-			}
+	 }
 
-			estimation = estimation + ajusts;
-		}
+	 estimation = estimation + ajusts;
+	 }
 
-		if (aprox == 4)
-		{
-			double ajusts = 0;
-			vector<int> adjustPrevValue;
-			adjustPrevValue.push_back(10);
-			adjustPrevValue.push_back(50);
-			adjustPrevValue.push_back(15);
-			adjustPrevValue.push_back(25);
-			adjustPrevValue.push_back(38);
-			adjustPrevValue.push_back(100);
+	 if (aprox == 4)
+	 {
+	 double ajusts = 0;
+	 vector<int> adjustPrevValue;
+	 adjustPrevValue.push_back(10);
+	 adjustPrevValue.push_back(50);
+	 adjustPrevValue.push_back(15);
+	 adjustPrevValue.push_back(25);
+	 adjustPrevValue.push_back(38);
+	 adjustPrevValue.push_back(100);
 
-			for (int ind = 0; ind < adjustPrevValue.size(); ind++)
-			{
+	 for (int ind = 0; ind < adjustPrevValue.size(); ind++)
+	 {
 
-				int indexK = adjustPrevValue[ind];
-				double valueIndexK = 0;
-				if (indexK <= (i + pa))
-				{
-					if (pa >= indexK)
-						valueIndexK += predicteds[pa - indexK];
-					else
-						valueIndexK += vForecastings[targetFile][i + pa - indexK];
+	 int indexK = adjustPrevValue[ind];
+	 double valueIndexK = 0;
+	 if (indexK <= (i + pa))
+	 {
+	 if (pa >= indexK)
+	 valueIndexK += predicteds[pa - indexK];
+	 else
+	 valueIndexK += vForecastings[targetFile][i + pa - indexK];
 
-					ajusts += vAlpha[ind] * (estimation - valueIndexK);
-				}
-			}
+	 ajusts += vAlpha[ind] * (estimation - valueIndexK);
+	 }
+	 }
 
-			estimation = estimation + ajusts;
+	 estimation = estimation + ajusts;
 
-		}
+	 }
 
-		if (aprox == 5)
-		{
-			double ajusts = 0;
-			vector<int> adjustPrevValue;
-			adjustPrevValue.push_back(1);
-			adjustPrevValue.push_back(24);
-			adjustPrevValue.push_back(48);
-			adjustPrevValue.push_back(168);
-			adjustPrevValue.push_back(168 * 2);
-			adjustPrevValue.push_back(168 * 3);
-			for (int ind = 0; ind < adjustPrevValue.size(); ind++)
-			{
-				int indexK = adjustPrevValue[ind];
-				double valueIndexK = 0;
-				if (indexK <= (i + pa))
-				{
-					if (pa >= indexK)
-						valueIndexK += predicteds[pa - indexK];
-					else
-					{
-						valueIndexK += vForecastings[targetFile][i + pa - indexK];
-					}
-					ajusts += vAlpha[ind] * (estimation - valueIndexK);
-				}
+	 if (aprox == 5)
+	 {
+	 double ajusts = 0;
+	 vector<int> adjustPrevValue;
+	 adjustPrevValue.push_back(1);
+	 adjustPrevValue.push_back(24);
+	 adjustPrevValue.push_back(48);
+	 adjustPrevValue.push_back(168);
+	 adjustPrevValue.push_back(168 * 2);
+	 adjustPrevValue.push_back(168 * 3);
+	 for (int ind = 0; ind < adjustPrevValue.size(); ind++)
+	 {
+	 int indexK = adjustPrevValue[ind];
+	 double valueIndexK = 0;
+	 if (indexK <= (i + pa))
+	 {
+	 if (pa >= indexK)
+	 valueIndexK += predicteds[pa - indexK];
+	 else
+	 {
+	 valueIndexK += vForecastings[targetFile][i + pa - indexK];
+	 }
+	 ajusts += vAlpha[ind] * (estimation - valueIndexK);
+	 }
 
-			}
+	 }
 
-			estimation = estimation + ajusts;
+	 estimation = estimation + ajusts;
 
-		}
-	}*/
+	 }
+	 }*/
 
 	vector<double> returnForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings, int begin)
 	{
@@ -364,64 +365,64 @@ public:
 
 				//fuzzyWeights.push_back(value);
 			}
-
-			for (int nMP = 0; nMP < sizeMP; nMP++)
-			{
-				vector<pair<int, int> > meansK = rep.averageIndex[nMP];
-				int nAveragePoints = meansK.size();
-
-				double mean = 0;
-				for (int mK = 0; mK < nAveragePoints; mK++)
-				{
-					int file = meansK[mK].first;
-					int K = meansK[mK].second;
-
-					mean += getKValue(K, file, begin, pa, vForecastings, predicteds);
-				}
-
-				mean = mean / nAveragePoints;
-
-				double ruleGreater = rep.averageFuzzyRS[nMP][GREATER];
-				double greaterWeight = rep.averageFuzzyRS[nMP][GREATER_WEIGHT];
-				double ruleLower = rep.averageFuzzyRS[nMP][LOWER];
-				double lowerWeight = rep.averageFuzzyRS[nMP][LOWER_WEIGHT];
-				double ruleEpsilon = rep.averageFuzzyRS[nMP][EPSILON];
-				FuzzyFunction repFuzzyPertinenceFunc = FuzzyFunction(rep.averageFuzzyRS[nMP][PERTINENCEFUNC]);
-
-				defuzzification(ruleGreater, greaterWeight, ruleLower, lowerWeight, ruleEpsilon, repFuzzyPertinenceFunc, mean, estimation, greaterAccepeted, lowerAccepted);
-
-				//fuzzyWeights.push_back(mean);
-			}
-
-			for (int nDP = 0; nDP < sizeDP; nDP++)
-			{
-				vector<pair<int, int> > derivateK = rep.derivativeIndex[nDP];
-
-				double d = 0;
-				for (int dK = 0; dK < derivateK.size(); dK++)
-				{
-					int file = derivateK[dK].first;
-					int K = derivateK[dK].second;
-
-					double value = getKValue(K, file, begin, pa, vForecastings, predicteds);
-
-					if (dK == 0)
-						d += value;
-					else
-						d -= value;
-				}
-
-				//fuzzyWeights.push_back(d);
-
-				double ruleGreater = rep.derivativeFuzzyRS[nDP][GREATER];
-				double greaterWeight = rep.derivativeFuzzyRS[nDP][GREATER_WEIGHT];
-				double ruleLower = rep.derivativeFuzzyRS[nDP][LOWER];
-				double lowerWeight = rep.derivativeFuzzyRS[nDP][LOWER_WEIGHT];
-				double ruleEpsilon = rep.derivativeFuzzyRS[nDP][EPSILON];
-				FuzzyFunction repFuzzyPertinenceFunc = FuzzyFunction(rep.derivativeFuzzyRS[nDP][PERTINENCEFUNC]);
-
-				defuzzification(ruleGreater, greaterWeight, ruleLower, lowerWeight, ruleEpsilon, repFuzzyPertinenceFunc, d, estimation, greaterAccepeted, lowerAccepted);
-			}
+//
+//			for (int nMP = 0; nMP < sizeMP; nMP++)
+//			{
+//				vector<pair<int, int> > meansK = rep.averageIndex[nMP];
+//				int nAveragePoints = meansK.size();
+//
+//				double mean = 0;
+//				for (int mK = 0; mK < nAveragePoints; mK++)
+//				{
+//					int file = meansK[mK].first;
+//					int K = meansK[mK].second;
+//
+//					mean += getKValue(K, file, begin, pa, vForecastings, predicteds);
+//				}
+//
+//				mean = mean / nAveragePoints;
+//
+//				double ruleGreater = rep.averageFuzzyRS[nMP][GREATER];
+//				double greaterWeight = rep.averageFuzzyRS[nMP][GREATER_WEIGHT];
+//				double ruleLower = rep.averageFuzzyRS[nMP][LOWER];
+//				double lowerWeight = rep.averageFuzzyRS[nMP][LOWER_WEIGHT];
+//				double ruleEpsilon = rep.averageFuzzyRS[nMP][EPSILON];
+//				FuzzyFunction repFuzzyPertinenceFunc = FuzzyFunction(rep.averageFuzzyRS[nMP][PERTINENCEFUNC]);
+//
+//				defuzzification(ruleGreater, greaterWeight, ruleLower, lowerWeight, ruleEpsilon, repFuzzyPertinenceFunc, mean, estimation, greaterAccepeted, lowerAccepted);
+//
+//				//fuzzyWeights.push_back(mean);
+//			}
+//
+//			for (int nDP = 0; nDP < sizeDP; nDP++)
+//			{
+//				vector<pair<int, int> > derivateK = rep.derivativeIndex[nDP];
+//
+//				double d = 0;
+//				for (int dK = 0; dK < derivateK.size(); dK++)
+//				{
+//					int file = derivateK[dK].first;
+//					int K = derivateK[dK].second;
+//
+//					double value = getKValue(K, file, begin, pa, vForecastings, predicteds);
+//
+//					if (dK == 0)
+//						d += value;
+//					else
+//						d -= value;
+//				}
+//
+//				//fuzzyWeights.push_back(d);
+//
+//				double ruleGreater = rep.derivativeFuzzyRS[nDP][GREATER];
+//				double greaterWeight = rep.derivativeFuzzyRS[nDP][GREATER_WEIGHT];
+//				double ruleLower = rep.derivativeFuzzyRS[nDP][LOWER];
+//				double lowerWeight = rep.derivativeFuzzyRS[nDP][LOWER_WEIGHT];
+//				double ruleEpsilon = rep.derivativeFuzzyRS[nDP][EPSILON];
+//				FuzzyFunction repFuzzyPertinenceFunc = FuzzyFunction(rep.derivativeFuzzyRS[nDP][PERTINENCEFUNC]);
+//
+//				defuzzification(ruleGreater, greaterWeight, ruleLower, lowerWeight, ruleEpsilon, repFuzzyPertinenceFunc, d, estimation, greaterAccepeted, lowerAccepted);
+//			}
 
 			//cout << "EstimationAntes:" << estimation << endl;
 			double accepted = greaterAccepeted + lowerAccepted;
@@ -471,6 +472,18 @@ public:
 			int nExtraForecasts = allForecasts.size() - nSamples;
 			allForecasts.erase(allForecasts.begin() + allForecasts.size() - nExtraForecasts, allForecasts.end());
 		}
+
+		// CALL GPU!!!
+		cout << "CPU finished with " << allForecasts.size() << " VALUES!" << endl;
+		cout << "CALL GPU!" << endl;
+		vector<double> vgpu = gpuTrainingSetForecasts(rep, vForecastings, maxLag, stepsAhead, aprox);
+		cout << "GPU finished with " << vgpu.size() << " VALUES!" << endl;
+		assert(allForecasts.size() == vgpu.size());
+
+		cout << "CPU: " << allForecasts << endl;
+		cout << "GPU: " << vgpu << endl;
+		getchar();
+		getchar();
 
 		return allForecasts;
 	}
@@ -573,7 +586,6 @@ public:
 		//cout << foIndicatorStepsAhead << endl;
 		return foIndicator;
 	}
-
 
 	vector<double> returnForecastingsFO(const RepEFP& rep, const vector<vector<double> >& vForecastings, bool validationMode, bool returnForecasts)
 	{
@@ -1108,7 +1120,7 @@ public:
 		for (int i = maxLag; i < vForecastings[0].size(); i++)
 			trainingSetValues.push_back(vForecastings[0][i]);
 
-		foIndicator = getAccuracy(trainingSetValues,estimatedValues,false);
+		foIndicator = getAccuracy(trainingSetValues, estimatedValues, false);
 
 		//foIndicator = returnForecastingsFO(rep, vForecastings, false, false);
 

@@ -20,10 +20,9 @@ int microGridLiuAppliedEnergy(int argc, char **argv)
 {
 	cout << "Welcome to Micro Grid Liu Applied Energy Dataset Calibration Mode..." << endl;
 
-	dotest();
-
-	getchar();
-	getchar();
+	//dotest();
+	//getchar();
+	//getchar();
 
 	RandGenMersenneTwister rg;
 	//long  1412730737
@@ -190,7 +189,8 @@ int microGridLiuAppliedEnergy(int argc, char **argv)
 
 		int maxTrainningRounds = 20;
 		int nTrainningRounds = rg.rand(maxTrainningRounds) + 1;
-		nTrainningRounds = 10;
+		nTrainningRounds = 20
+				;
 		int nTotalForecastingsTrainningSet = maxLag + nTrainningRounds * stepsAhead;
 
 		int beginTrainingSet = 672;
