@@ -65,7 +65,6 @@ struct CUDARep
 	//val6* derivativeFuzzyRS;
 };
 
-
 __host__ void transferRep(const RepEFP& rep, CUDARep& cudarep)
 {
 	cudarep.size = rep.singleIndex.size();
@@ -93,7 +92,6 @@ __host__ void transferRep(const RepEFP& rep, CUDARep& cudarep)
 	CUDA_CHECK_RETURN(cudaMemcpy(cudarep.d_singleIndex, cudarep.h_singleIndex, sizeof(val2) * cudarep.size, cudaMemcpyHostToDevice));
 	CUDA_CHECK_RETURN(cudaMemcpy(cudarep.d_singleFuzzyRS, cudarep.h_singleFuzzyRS, sizeof(val2) * cudarep.size, cudaMemcpyHostToDevice));
 }
-
 
 __device__ void defuzzification(double ruleGreater, double greaterWeight, double ruleLower, double lowerWeight, double ruleEpsilon, FuzzyFunction fuzzyFunc, double value, double* estimation, double* greaterAccepted, double* lowerAccepted)
 {
@@ -160,10 +158,62 @@ __device__ void defuzzification(double ruleGreater, double greaterWeight, double
 	}
 }
 
+//__host__ vector<double> returnForecasts(CUDARep cudarep, float* dForecastings, int begin, int maxLag, int stepsAhead, const int aprox);
+__global__ void kernelForecasts(CUDARep cudarep, float* dForecastings, int maxLag, int stepsAhead, const int aprox, float* rForecasts);
 
-__host__ vector<double> returnForecasts(CUDARep cudarep, float* dForecastings, int begin, int maxLag, int stepsAhead, const int aprox);
+__host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dForecastings, int* dfSize, int* hfSize, int maxLag, int stepsAhead, const int aprox)
+{
+	int nForTargetFile = hfSize[0];
+	int nSamples = nForTargetFile - maxLag;
 
-__host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dForecastings, int maxLag, int stepsAhead, const int aprox);
+	int nThreads = ceil(nSamples / stepsAhead);
+
+	cout << "nForTargetFile=" << nForTargetFile << endl;
+	cout << "nSamples=" << nSamples << endl;
+	cout << "stepsAhead=" << stepsAhead << endl;
+	cout << "nThreads=" << nThreads << endl;
+
+	int threadsPerBlock = 1024; // tx
+
+	if (nThreads > threadsPerBlock)
+	{
+		printf("ERROR! MORE THAN %d threads per block! TOTAL: %d\n", threadsPerBlock, nThreads);
+		exit(1);
+	}
+
+	int rsize = maxLag + nThreads * stepsAhead;
+	float* hrForecasts = new float[rsize];
+	float* drForecasts;
+	CUDA_CHECK_RETURN(cudaMalloc((void** ) &drForecasts, sizeof(float) * rsize));
+
+	kernelForecasts<<<1, threadsPerBlock>>>(cudarep, dForecastings, maxLag, stepsAhead, aprox, drForecasts);
+
+	/*
+	 for (int i = maxLag; i < nForTargetFile; i += stepsAhead) // main loop that varries all the time series
+	 {
+	 vector<double> predicteds = returnForecasts(cudarep, dForecastings, i, maxLag, stepsAhead, aprox);
+
+	 for (int f = 0; f < predicteds.size(); f++)
+	 allForecasts.push_back(predicteds[f]);
+	 }
+	 */
+
+	CUDA_CHECK_RETURN(cudaMemcpy(hrForecasts, drForecasts, sizeof(float) * rsize, cudaMemcpyDeviceToHost));
+
+	vector<double> allForecasts;
+
+	for (unsigned k = maxLag; k < nThreads * stepsAhead; k++)
+		allForecasts.push_back(hrForecasts[k]);
+
+	//TODO do it in a better style
+	if (allForecasts.size() > nSamples)
+	{
+		int nExtraForecasts = allForecasts.size() - nSamples;
+		allForecasts.erase(allForecasts.begin() + allForecasts.size() - nExtraForecasts, allForecasts.end());
+	}
+
+	return allForecasts;
+}
 
 vector<double> gpuTrainingSetForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings, int maxLag, int stepsAhead, const int aprox)
 {
@@ -171,11 +221,11 @@ vector<double> gpuTrainingSetForecasts(const RepEFP& rep, const vector<vector<do
 	transferRep(rep, cudarep);
 
 	int datasize = 0;
-	int* fSize = new int[vForecastings.size()];
+	int* hfSize = new int[vForecastings.size()];
 	for (unsigned i = 0; i < vForecastings.size(); i++)
 	{
-		fSize[i] = vForecastings[i].size();
-		datasize += fSize[i];
+		hfSize[i] = vForecastings[i].size();
+		datasize += hfSize[i];
 	}
 
 	float* hForecastings = new float[datasize];
@@ -190,7 +240,11 @@ vector<double> gpuTrainingSetForecasts(const RepEFP& rep, const vector<vector<do
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) &dForecastings, sizeof(float) * datasize));
 	CUDA_CHECK_RETURN(cudaMemcpy(dForecastings, hForecastings, sizeof(float) * datasize, cudaMemcpyHostToDevice));
 
-	return returnTrainingSetForecasts(cudarep, dForecastings, maxLag, stepsAhead, aprox);
+	int* dfSize;
+	CUDA_CHECK_RETURN(cudaMalloc((void** ) &dfSize, sizeof(int) * vForecastings.size()));
+	CUDA_CHECK_RETURN(cudaMemcpy(dfSize, hfSize, sizeof(int) * vForecastings.size(), cudaMemcpyHostToDevice));
+
+	return returnTrainingSetForecasts(cudarep, dForecastings, dfSize, hfSize, maxLag, stepsAhead, aprox);
 }
 
 #endif /* CUDAEVAL_CUH_ */

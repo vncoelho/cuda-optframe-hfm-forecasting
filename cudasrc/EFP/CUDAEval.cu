@@ -80,30 +80,7 @@ vector<double> returnForecasts(const RepEFP& rep, const vector<vector<double> >&
 	return predicteds;
 }
 
-vector<double> returnTrainingSetForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings, int maxLag, int stepsAhead, const int aprox)
-{
-	int nForTargetFile = vForecastings[0].size();
-	int nSamples = nForTargetFile - maxLag;
 
-	vector<double> allForecasts;
-
-	for (int i = maxLag; i < nForTargetFile; i += stepsAhead) // main loop that varries all the time series
-	{
-		vector<double> predicteds = returnForecasts(rep, vForecastings, i, maxLag, stepsAhead, aprox);
-
-		for (int f = 0; f < predicteds.size(); f++)
-			allForecasts.push_back(predicteds[f]);
-	}
-
-	//TODO do it in a better style
-	if (allForecasts.size() > nSamples)
-	{
-		int nExtraForecasts = allForecasts.size() - nSamples;
-		allForecasts.erase(allForecasts.begin() + allForecasts.size() - nExtraForecasts, allForecasts.end());
-	}
-
-	return allForecasts;
-}
 
 /**
  * This macro checks return value of the CUDA runtime call and exits
