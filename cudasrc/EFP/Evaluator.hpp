@@ -453,11 +453,11 @@ public:
 
 	vector<double> returnTrainingSetForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings)
 	{
-
-		Timer t;
 		int nForTargetFile = vForecastings[0].size();
 		int maxLag = problemParam.getMaxLag();
 		int nSamples = nForTargetFile - maxLag;
+
+		Timer t;
 
 		vector<double> allForecasts;
 
@@ -477,24 +477,35 @@ public:
 		}
 
 		// CALL GPU!!!
-		cout << "CPU finished with " << allForecasts.size() << " VALUES!" << endl;
+		//cout << "CPU finished with " << allForecasts.size() << " VALUES!" << endl;
 		cout << "CPU: " << t.inMilliSecs() << " ms" << endl;
-		cout << "CALL GPU!" << endl;
+		//cout << "CALL GPU!" << endl;
 		Timer tgpu;
 		vector<double> vgpu = gpuTrainingSetForecasts(rep, vForecastings, maxLag, stepsAhead, aprox);
-		cout << "GPU finished with " << vgpu.size() << " VALUES!" << endl;
-		cout << "GPU: " << tgpu.inMilliSecs() << " ms" << endl;
+		//cout << "GPU finished with " << vgpu.size() << " VALUES!" << endl;
+		cout << "GPU: " << tgpu.inMilliSecs() << " ms" << endl<<endl;
 		assert(allForecasts.size() == vgpu.size());
 
 		if (allForecasts.size() <= 500)
 		{
-			cout << "CPU: " << allForecasts << endl;
+			cout << "CPU: " << allForecasts << endl ;
 			cout << "GPU: " << vgpu << endl;
 		}
-		getchar();
-		getchar();
+		//getchar();
+
 
 		return allForecasts;
+	}
+
+	vector<double> returnTrainingSetForecastsGPU(const RepEFP& rep, const vector<vector<double> >& vForecastings)
+	{
+		int nForTargetFile = vForecastings[0].size();
+		int maxLag = problemParam.getMaxLag();
+		int nSamples = nForTargetFile - maxLag;
+
+		vector<double> vgpu = gpuTrainingSetForecasts(rep, vForecastings, maxLag, stepsAhead, aprox);
+
+		return vgpu;
 	}
 
 	vector<double> getAccuracy(vector<double> targetValues, vector<double> estimatedValues, bool validationMode)
@@ -1122,7 +1133,10 @@ public:
 		vector<vector<double> > vForecastings = pEFP.getForecastingsVector();
 
 		//validation mode = false | returnforecasts = false
+
+
 		vector<double> estimatedValues = returnTrainingSetForecasts(rep, vForecastings);
+		//vector<double> estimatedValues = returnTrainingSetForecastsGPU(rep, vForecastings);
 
 		int maxLag = problemParam.getMaxLag();
 		vector<double> trainingSetValues;

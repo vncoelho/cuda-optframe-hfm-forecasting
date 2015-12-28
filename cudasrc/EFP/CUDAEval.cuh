@@ -168,18 +168,19 @@ __host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dFore
 
 	int nThreads = ceil(nSamples / float(stepsAhead));
 
-
 	int threadsPerBlock = 256; // tx
-	int blocks = ceil(nThreads / float(threadsPerBlock));
+	int blocks;
+	CUDA_CHECK_RETURN(cudaOccupancyMaxPotentialBlockSize(&blocks, &threadsPerBlock, kernelForecasts, 0, 0));
 
-	cout << "nForTargetFile=" << nForTargetFile << endl;
-	cout << "maxLag=" << maxLag << endl;
-	cout << "nSamples=" << nSamples << endl;
-	cout << "stepsAhead=" << stepsAhead << endl;
-	cout << "nThreads=" << nThreads << endl;
-	cout << "threadsPerBlock=" << threadsPerBlock << endl;
-	cout << "blocks=" << blocks << endl;
+	blocks = ceil(nThreads / float(threadsPerBlock));
 
+//	cout << "nForTargetFile=" << nForTargetFile << endl;
+//	cout << "maxLag=" << maxLag << endl;
+//	cout << "nSamples=" << nSamples << endl;
+//	cout << "stepsAhead=" << stepsAhead << endl;
+//	cout << "nThreads=" << nThreads << endl;
+//	cout << "threadsPerBlock=" << threadsPerBlock << endl;
+//	cout << "blocks=" << blocks << endl;
 
 //	if (nThreads > threadsPerBlock)
 //	{
