@@ -510,8 +510,6 @@ public:
 //		cout << "CALL GPU!" << endl;
 		Timer tgpu;
 
-		cout<<"calling GPU on Evaluator.hpp"<<endl;
-		getchar();
 		vector<double> vgpu = gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize,datasize,hForecastings);
 //		cout << "GPU finished with " << vgpu.size() << " VALUES!" << endl<< endl;
 //		cout << "GPU: " << tgpu.inMilliSecs() << " ms" << endl << endl;
