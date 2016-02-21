@@ -6,4 +6,9 @@ app_*
 .cproject
 .settings
 /Debug
+<<<<<<< HEAD
 /Release
+=======
+microGridCalibration
+INSTANC*
+>>>>>>> 38b18d7a8d62c21b3734679cf054ee4786c86155

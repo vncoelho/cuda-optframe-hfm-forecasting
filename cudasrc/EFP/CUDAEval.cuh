@@ -84,12 +84,16 @@ __host__ void transferRep(const RepEFP& rep, CUDARep& cudarep)
 		cudarep.h_singleFuzzyRS[i].PERTINENCEFUNC = rep.singleFuzzyRS[i][PERTINENCEFUNC];
 	}
 
+	cout<<"First Malloc OK!"<<endl;
+	getchar();
 
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) &cudarep.d_singleIndex, sizeof(val2) * cudarep.size));
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) &cudarep.d_singleFuzzyRS, sizeof(val6) * cudarep.size));
 	CUDA_CHECK_RETURN(cudaMemcpy(cudarep.d_singleIndex, cudarep.h_singleIndex, sizeof(val2) * cudarep.size, cudaMemcpyHostToDevice));
 	CUDA_CHECK_RETURN(cudaMemcpy(cudarep.d_singleFuzzyRS, cudarep.h_singleFuzzyRS, sizeof(val6) * cudarep.size, cudaMemcpyHostToDevice));
 
+	cout<<"RepTransfer OK!"<<endl;
+	getchar();
 }
 
 __device__ void defuzzification(double ruleGreater, double greaterWeight, double ruleLower, double lowerWeight, double ruleEpsilon, FuzzyFunction fuzzyFunc, double value, double* estimation, double* greaterAccepted, double* lowerAccepted)
@@ -163,13 +167,17 @@ __global__ void kernelForecasts(int nThreads, CUDARep cudarep, float* dForecasti
 __host__ void initializeCudaItems(int datasize, int vForecastingSize, int* hfSize, const float* hForecastings, float** dForecastings, int** dfSize)
 {
 
-
+	cout<<"MalocError11!"<<endl;
+	getchar();
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) dForecastings, sizeof(float) * datasize));
-
+	cout<<"MemCOYError!"<<endl;
+	getchar();
 	CUDA_CHECK_RETURN(cudaMemcpy(*dForecastings, hForecastings, sizeof(float) * datasize, cudaMemcpyHostToDevice));
 
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) dfSize, sizeof(int) * vForecastingSize));
 	CUDA_CHECK_RETURN(cudaMemcpy(*dfSize, hfSize, sizeof(int) * vForecastingSize, cudaMemcpyHostToDevice));
+	cout<<"MallocErrorok!"<<endl;
+		getchar();
 
 }
 

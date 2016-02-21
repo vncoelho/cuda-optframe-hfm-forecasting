@@ -82,7 +82,7 @@ int microGridLiuAppliedEnergy(int argc, char **argv)
 
 	//TREATED DATA FROM LIU
 	string fileMicroGridAT = "INSTANCEmicroGridLiuAETreated/A";
-	string fileMicroGridBT = "INSTANCEmicroGridLiuAETreated/B2";
+	string fileMicroGridBT = "INSTANCEmicroGridLiuAETreated/RealInstances/B2";
 	string fileMicroGridCT = "INSTANCEmicroGridLiuAETreated/C";
 	string fileMicroGridDT = "INSTANCEmicroGridLiuAETreated/D";
 	vector<string> vInstances;
