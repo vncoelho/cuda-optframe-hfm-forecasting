@@ -165,7 +165,6 @@ __global__ void kernelForecasts(int nThreads, CUDARep cudarep, float* dForecasti
 __host__ void initializeCudaItems(int datasize, int vForecastingSize, int* hfSize, const float* hForecastings, float** dForecastings, int** dfSize)
 {
 
-
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) dForecastings, sizeof(float) * datasize));
 	CUDA_CHECK_RETURN(cudaMemcpy(*dForecastings, hForecastings, sizeof(float) * datasize, cudaMemcpyHostToDevice));
 
@@ -220,7 +219,7 @@ __host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dFore
 	cudaEventSynchronize(stop);
 
 	CUDA_CHECK_RETURN(cudaMemcpy(hrForecasts, predicted, sizeof(float) * rsize, cudaMemcpyDeviceToHost));
-
+	cudaFree(predicted);
 //	float dt_ms;
 //	cudaEventElapsedTime(&dt_ms, start, stop);
 //	cout << "ElapsedTime : " << dt_ms << endl;
@@ -255,12 +254,14 @@ vector<double> gpuTrainingSetForecasts(const RepEFP& rep, int maxLag, int stepsA
 {
 
 	CUDARep cudarep;
+
 	transferRep(rep, cudarep);
 
 
-	CUDA_CHECK_RETURN(cudaMalloc((void** ) dForecastings, sizeof(float) * datasize));
+//	CUDA_CHECK_RETURN(cudaMalloc((void** ) dForecastings, sizeof(float) * datasize));
 
 	initializeCudaItems(datasize, 1, hfSize, hForecastings, &dForecastings, &dfSize);
+
 
 	vector<double> vr = returnTrainingSetForecasts(cudarep, dForecastings, dfSize, hfSize, maxLag, stepsAhead, aprox);
 

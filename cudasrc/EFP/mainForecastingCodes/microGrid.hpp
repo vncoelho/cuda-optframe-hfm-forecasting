@@ -189,7 +189,7 @@ int microGridLiuAppliedEnergy(int argc, char **argv)
 
 		int maxTrainningRounds = 20;
 		int nTrainningRounds = rg.rand(maxTrainningRounds) + 1;
-		nTrainningRounds = 100000;
+		nTrainningRounds = 10000;
 		int nTotalForecastingsTrainningSet = maxLag + nTrainningRounds * stepsAhead;
 
 		int beginTrainingSet = 672;

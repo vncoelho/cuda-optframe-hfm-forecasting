@@ -481,12 +481,18 @@ public:
 
 	vector<double> returnTrainingSetForecasts(const RepEFP& rep)
 	{
+
+
+
 		Timer t;
 		int nForTargetFile = vForecastings[0].size();
 		int maxLag = problemParam.getMaxLag();
 		int nSamples = nForTargetFile - maxLag;
 
+		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize,datasize,hForecastings);
+
 		vector<double> allForecasts;
+
 
 		for (int i = maxLag; i < nForTargetFile; i += stepsAhead) // main loop that varries all the time series
 		{
@@ -510,11 +516,25 @@ public:
 //		cout << "CALL GPU!" << endl;
 		Timer tgpu;
 
+
 		vector<double> vgpu = gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize,datasize,hForecastings);
+
 //		cout << "GPU finished with " << vgpu.size() << " VALUES!" << endl<< endl;
 //		cout << "GPU: " << tgpu.inMilliSecs() << " ms" << endl << endl;
 		avgTimeGPU += tgpu.inMilliSecs();
 		numberEval += 1;
+
+//		if(vgpu != allForecasts)
+//		{
+//			cout<<"ERROR ON EVALUATOR ! Different Evaluation from CPU and GPU!!!"<<endl;
+//			cout<<vgpu.size()<<endl;
+//			cout<<allForecasts.size()<<endl;
+//			cout<<vgpu<<endl;
+//			cout<<allForecasts<<endl;
+//
+//			getchar();
+//		}
+
 
 		//TODO funcEVAL
 		if (numberEval % 10 == 0)
