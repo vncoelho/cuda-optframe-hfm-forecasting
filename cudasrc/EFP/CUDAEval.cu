@@ -73,6 +73,7 @@ __global__ void kernelForecasts(int nThreads, CUDARep cudarep, float* dForecasti
 
 		//cout << "EstimationAntes:" << estimation << endl;
 		double accepted = greaterAccepeted + lowerAccepted;
+
 		if (accepted > 0)
 			estimation /= accepted;
 

@@ -62,12 +62,23 @@ private:
 	int evalFO;
 	ProblemParameters& problemParam;
 	int aprox;
+	vector<vector<double> > vForecastings;
+	float* hForecastings;
+	int* hfSize;
+	int datasize;
+	float* dForecastings;
+	int* dfSize;
 
+	double avgTimeCPU, avgTimeGPU;
+	int numberEval;
 public:
 
 	EFPEvaluator(ProblemInstance& _pEFP, ProblemParameters& _problemParam, int _evalFO, int _aprox) : // If necessary, add more parameters
 			pEFP(_pEFP), problemParam(_problemParam), evalFO(_evalFO), aprox(_aprox)
 	{
+		avgTimeCPU = 0;
+		avgTimeGPU = 0;
+		numberEval = 0;
 		targetFile = 0; //this is the file to be learned
 
 		stepsAhead = problemParam.getStepsAhead();
@@ -75,7 +86,24 @@ public:
 		nForecastings = pEFP.getForecatingsSizeFile(0); //all files have the same size
 
 		//calculating the oldest step used as input of the model
+		vForecastings = pEFP.getForecastingsVector();
+		datasize = 0;
+		hfSize = new int[vForecastings.size()];
+		for (unsigned i = 0; i < vForecastings.size(); i++)
+		{
+			hfSize[i] = vForecastings[i].size();
+			datasize += hfSize[i];
+		}
 
+		hForecastings = new float[datasize];
+		int k = 0;
+		for (unsigned i = 0; i < vForecastings.size(); i++)
+			for (unsigned j = 0; j < vForecastings[i].size(); j++)
+				hForecastings[k++] = vForecastings[i][j];
+
+		assert(k == datasize); // verify that all data is copied
+
+		//initializeCudaItems(datasize, vForecastings.size(), hfSize, hForecastings, &dForecastings, &dfSize);
 	}
 
 	virtual ~EFPEvaluator()
@@ -328,7 +356,7 @@ public:
 	 }
 	 }*/
 
-	vector<double> returnForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings, int begin)
+	vector<double> returnForecasts(const RepEFP& rep, int begin)
 	{
 		int sizeSP = rep.singleIndex.size();
 //		int sizeMP = rep.averageIndex.size();
@@ -451,9 +479,8 @@ public:
 		return predicteds;
 	}
 
-	vector<double> returnTrainingSetForecasts(const RepEFP& rep, const vector<vector<double> >& vForecastings)
+	vector<double> returnTrainingSetForecasts(const RepEFP& rep)
 	{
-
 		Timer t;
 		int nForTargetFile = vForecastings[0].size();
 		int maxLag = problemParam.getMaxLag();
@@ -463,7 +490,7 @@ public:
 
 		for (int i = maxLag; i < nForTargetFile; i += stepsAhead) // main loop that varries all the time series
 		{
-			vector<double> predicteds = returnForecasts(rep, vForecastings, i);
+			vector<double> predicteds = returnForecasts(rep, i);
 
 			for (int f = 0; f < predicteds.size(); f++)
 				allForecasts.push_back(predicteds[f]);
@@ -477,22 +504,38 @@ public:
 		}
 
 		// CALL GPU!!!
-		cout << "CPU finished with " << allForecasts.size() << " VALUES!" << endl;
-		cout << "CPU: " << t.inMilliSecs() << " ms" << endl;
-		cout << "CALL GPU!" << endl;
+//		cout << "CPU finished with " << allForecasts.size() << " VALUES!" << endl;
+		avgTimeCPU += t.inMilliSecs();
+//		cout << "CPU: " << t.inMilliSecs() << " ms" << endl;
+//		cout << "CALL GPU!" << endl;
 		Timer tgpu;
-		vector<double> vgpu = gpuTrainingSetForecasts(rep, vForecastings, maxLag, stepsAhead, aprox);
-		cout << "GPU finished with " << vgpu.size() << " VALUES!" << endl;
-		cout << "GPU: " << tgpu.inMilliSecs() << " ms" << endl;
-		assert(allForecasts.size() == vgpu.size());
 
-		if (allForecasts.size() <= 500)
+
+		vector<double> vgpu = gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize,datasize,hForecastings);
+//		cout << "GPU finished with " << vgpu.size() << " VALUES!" << endl<< endl;
+//		cout << "GPU: " << tgpu.inMilliSecs() << " ms" << endl << endl;
+		avgTimeGPU += tgpu.inMilliSecs();
+		numberEval += 1;
+
+		//TODO funcEVAL
+		if (numberEval % 10 == 0)
 		{
-			cout << "CPU: " << allForecasts << endl;
-			cout << "GPU: " << vgpu << endl;
+			cout << "Average CPU: " << avgTimeCPU / numberEval << " ms" << endl;
+			cout << "Average GPU: " << avgTimeGPU / numberEval << " ms" << endl;
+			cout << "#funcEvaluations: " << numberEval << endl << endl;
 		}
-		getchar();
-		getchar();
+//		getchar();
+//		assert(allForecasts.size() == vgpu.size());
+//
+
+//		if (allForecasts.size() <= 500)
+//		{
+//			cout << "CPU: " << allForecasts << endl;
+//			cout << "GPU: " << vgpu << endl;
+//			getchar();
+//		}
+
+//		getchar();
 
 		return allForecasts;
 	}
@@ -1119,10 +1162,8 @@ public:
 		 for (int i = 0; i < foIndicatorStepsAhead.size(); i++)
 		 foIndicatorStepsAhead[i].resize(stepsAhead);*/
 
-		vector<vector<double> > vForecastings = pEFP.getForecastingsVector();
-
 		//validation mode = false | returnforecasts = false
-		vector<double> estimatedValues = returnTrainingSetForecasts(rep, vForecastings);
+		vector<double> estimatedValues = returnTrainingSetForecasts(rep);
 
 		int maxLag = problemParam.getMaxLag();
 		vector<double> trainingSetValues;

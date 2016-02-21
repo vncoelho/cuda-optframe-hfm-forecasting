@@ -82,7 +82,7 @@ int microGridLiuAppliedEnergy(int argc, char **argv)
 
 	//TREATED DATA FROM LIU
 	string fileMicroGridAT = "INSTANCEmicroGridLiuAETreated/A";
-	string fileMicroGridBT = "INSTANCEmicroGridLiuAETreated/BNEW";
+	string fileMicroGridBT = "INSTANCEmicroGridLiuAETreated/B2";
 	string fileMicroGridCT = "INSTANCEmicroGridLiuAETreated/C";
 	string fileMicroGridDT = "INSTANCEmicroGridLiuAETreated/D";
 	vector<string> vInstances;
@@ -175,7 +175,7 @@ int microGridLiuAppliedEnergy(int argc, char **argv)
 		ProblemParameters problemParam;
 		//ProblemParameters problemParam(vParametersFiles[randomParametersFiles]);
 		int nVR = 168;
-		int nSA = 24;
+		int nSA = 1;
 		problemParam.setStepsAhead(nSA);
 		int stepsAhead = problemParam.getStepsAhead();
 		//========SET PROBLEM MAXIMUM LAG ===============
