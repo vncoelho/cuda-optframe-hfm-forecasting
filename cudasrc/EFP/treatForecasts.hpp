@@ -11,9 +11,10 @@
 #include <vector>   // vector
 #include<cmath>     // abs
 #include<algorithm> // sort
+#include <iomanip>
+#include <fstream>
 #include "../../OptFrame/Scanner++/Scanner.h"
 #include "Evaluator.hpp" // compara
-
 using namespace scannerpp;
 
 using namespace std;
@@ -81,7 +82,6 @@ public:
 			delete scannerFiles[exVar];
 		}
 
-
 	}
 
 	int getForecastsDataSize()
@@ -95,9 +95,10 @@ public:
 	}
 
 
+
 	vector<vector<double> > readQuantilesFromFile(string quantilFile, int fileStepsAhead)
 	{
-		vector < vector<double> > quantiles(fileStepsAhead);
+		vector<vector<double> > quantiles(fileStepsAhead);
 
 		File* fileP;
 
@@ -180,7 +181,7 @@ public:
 		int totalForecasts = forecast.size();
 		int sizePieces = totalForecasts / pieces;
 
-		vector < vector<double> > vForecastPartbyPart;
+		vector<vector<double> > vForecastPartbyPart;
 
 		for (int p = 0; p < pieces; p++)
 		{
@@ -199,11 +200,11 @@ public:
 
 	vector<vector<vector<double> > > splitForecastsVectors(vector<vector<double> > vForecast, int pieces)
 	{
-		vector < vector<vector<double> > > vForecastsPartbyPart;
+		vector<vector<vector<double> > > vForecastsPartbyPart;
 		int nForecastVectors = vForecast.size();
 		for (int n = 0; n < nForecastVectors; n++)
 		{
-			vector < vector<double> > forecastPartbyPart;
+			vector<vector<double> > forecastPartbyPart;
 			forecastPartbyPart = splitForecasts(vForecast[n], pieces);
 			vForecastsPartbyPart.push_back(forecastPartbyPart);
 		}
@@ -215,7 +216,7 @@ public:
 	{
 		int totalForecasts = forecast.size();
 
-		vector < vector<double> > vForecastDayByDay(7);
+		vector<vector<double> > vForecastDayByDay(7);
 
 		int d = 0;
 		for (int i = 0; i < totalForecasts; i = i + 24)
@@ -300,7 +301,7 @@ public:
 
 		for (double quantilError = 0; quantilError <= 1; quantilError = quantilError + 0.05)
 		{
-			vector < vector<double> > forecastings;
+			vector<vector<double> > forecastings;
 			for (int i = 0; i < forecasts.size(); i++)
 			{
 				double prev;
@@ -339,7 +340,7 @@ public:
 
 	vector<vector<double> > generateQuantisProbabilisticVectorFixedQuantilError(vector<double> forecasts, double quantilError)
 	{
-		vector < vector<double> > vQuantisResults;
+		vector<vector<double> > vQuantisResults;
 
 		for (int i = 0; i < forecasts.size(); i++)
 		{
@@ -363,11 +364,11 @@ public:
 
 	vector<vector<vector<double> > > generateQuantisProbabilisticVector(vector<double> forecasts)
 	{
-		vector < vector<vector<double> > > vQuantisResults;
+		vector<vector<vector<double> > > vQuantisResults;
 
 		for (double quantilError = 0; quantilError <= 1; quantilError = quantilError + 0.05)
 		{
-			vector < vector<double> > forecastings;
+			vector<vector<double> > forecastings;
 			for (int i = 0; i < forecasts.size(); i++)
 			{
 				double prev;

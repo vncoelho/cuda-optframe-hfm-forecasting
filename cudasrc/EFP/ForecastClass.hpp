@@ -205,6 +205,7 @@ public:
 		pair<Solution<RepEFP>&, Evaluation&>* finalSol;
 
 		//finalSol = EsCOpt->search(timeES);
+		cout<<"Training With Discrete Evolution Strategy"<<endl;
 		finalSol = es->search(timeES);
 
 //		vnd->setMessageLevel(3);

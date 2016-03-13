@@ -43,7 +43,7 @@ int microGridLiuAppliedEnergy(int argc, char **argv)
 	int argvTargetTimeSeries = atoi(argv[2]);
 	int argvNumberOfRules = atoi(argv[3]);
 	int argvTimeES = atoi(argv[4]);
-	argvTimeES = 120;
+	argvTimeES = 60;
 
 	//double argvAlphaACF = atof(argv[4]);
 
@@ -179,7 +179,7 @@ int microGridLiuAppliedEnergy(int argc, char **argv)
 		problemParam.setStepsAhead(nSA);
 		int stepsAhead = problemParam.getStepsAhead();
 		//========SET PROBLEM MAXIMUM LAG ===============
-		problemParam.setMaxLag(672);
+		problemParam.setMaxLag(3000);
 		int maxLag = problemParam.getMaxLag();
 
 		//If maxUpperLag is greater than 0 model uses predicted data
@@ -189,7 +189,7 @@ int microGridLiuAppliedEnergy(int argc, char **argv)
 
 		int maxTrainningRounds = 20;
 		int nTrainningRounds = rg.rand(maxTrainningRounds) + 1;
-		nTrainningRounds = 10000;
+		nTrainningRounds = 100000;
 		int nTotalForecastingsTrainningSet = maxLag + nTrainningRounds * stepsAhead;
 
 		int beginTrainingSet = 672;

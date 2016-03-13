@@ -468,9 +468,9 @@ public:
 //				approximationsEnayatifar(aprox, alpha, vAlpha, vIndexAlphas, vIndex, estimation, begin, pa, vForecastings, predicteds, maxLag);
 //			}
 
-			//				Remove this for other forecast problem -- rain forecast
-			//				if (estimation < 0)
-			//					estimation = 0;
+//							Remove this for other forecast problem -- rain forecast
+			if (estimation < 0)
+				estimation = 0;
 
 			predicteds.push_back(estimation);
 
@@ -482,17 +482,15 @@ public:
 	vector<double> returnTrainingSetForecasts(const RepEFP& rep)
 	{
 
-
-
 		Timer t;
 		int nForTargetFile = vForecastings[0].size();
 		int maxLag = problemParam.getMaxLag();
 		int nSamples = nForTargetFile - maxLag;
 
-		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize,datasize,hForecastings);
+		//Only GPU Evaluator TODO
+		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
 
 		vector<double> allForecasts;
-
 
 		for (int i = maxLag; i < nForTargetFile; i += stepsAhead) // main loop that varries all the time series
 		{
@@ -516,8 +514,7 @@ public:
 //		cout << "CALL GPU!" << endl;
 		Timer tgpu;
 
-
-		vector<double> vgpu = gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize,datasize,hForecastings);
+		vector<double> vgpu = gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
 
 //		cout << "GPU finished with " << vgpu.size() << " VALUES!" << endl<< endl;
 //		cout << "GPU: " << tgpu.inMilliSecs() << " ms" << endl << endl;
@@ -535,9 +532,8 @@ public:
 //			getchar();
 //		}
 
-
 		//TODO funcEVAL
-		if (numberEval % 10 == 0)
+		if (numberEval % 100 == 0)
 		{
 			cout << "Average CPU: " << avgTimeCPU / numberEval << " ms" << endl;
 			cout << "Average GPU: " << avgTimeGPU / numberEval << " ms" << endl;

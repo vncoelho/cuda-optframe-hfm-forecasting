@@ -183,6 +183,9 @@ public:
 			autocorr acf(-1, lags);
 			acf.ACF(acfData, nTotalPoints, info);
 			acfPoints.push_back(info.points());
+
+//			cout<<acfPoints<<endl;
+//			getchar();
 		}
 
 		vector<vector<pair<double, int> > > acfGreedy(numberExplanatoryVariables);

@@ -17,5 +17,6 @@
 #include "./EFP/EFPESContinous.hpp"
 #include "./EFP/treatForecasts.hpp"
 #include "./EFP/ForecastClass.hpp"
+#include "./EFP/alexandreTreatReed.hpp"
 
 #endif /*EFP_H_*/

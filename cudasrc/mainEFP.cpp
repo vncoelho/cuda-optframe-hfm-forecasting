@@ -15,6 +15,7 @@
 //#include "./EFP/mainForecastingCodes/loadMain.cpp"
 
 #include "./EFP/mainForecastingCodes/microGrid.hpp"
+#include "./EFP/mainForecastingCodes/REW2016_REED.hpp"
 //#include "./EFP/mainForecastingCodes/microGridComplicated.hpp"
 //#include "./EFP/mainForecastingCodes/selfUseMode.cpp"
 //#include "./EFP/mainForecastingCodes/jamesTaylor.cpp"
@@ -68,7 +69,7 @@ int main(int argc, char **argv)
 	type = 4; // rain forecast
 	type = 69; // mokoko forecast
 
-	type = 2; // colocar o numero desejado
+	type = 1000; // colocar o numero desejado
 	int r;
 
 	int trainningMode = 0; //calibration mode active if value is 1
@@ -97,6 +98,12 @@ int main(int argc, char **argv)
 
 	case 2: //Liu Mode Applied Energy, 2014
 		r = microGridLiuAppliedEnergy(argc, argv);
+		cout << "Program ended successfully in MG Mode" << endl;
+		return r;
+		break;
+
+	case 1000: //Liu Mode Applied Energy, 2014
+		r = rew2016CUDADemandForecasting(argc, argv);
 		cout << "Program ended successfully in MG Mode" << endl;
 		return r;
 		break;

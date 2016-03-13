@@ -17,13 +17,13 @@ __global__ void kernelForecasts(int nThreads, CUDARep cudarep, float* dForecasti
 {
 	int sizeSP = cudarep.size; //rep.singleIndex.size();
 
-	int tidx = threadIdx.x + blockIdx.x*blockDim.x;
+	int tidx = threadIdx.x + blockIdx.x * blockDim.x;
 	if (tidx >= nThreads)
 		return;
 
 	int offset = tidx * stepsAhead;
 
-	const int begin = maxLag + (tidx * stepsAhead) ;
+	const int begin = maxLag + (tidx * stepsAhead);
 
 	//int nForTargetFile = dfSize[0]; //vForecastings[0].size();
 
@@ -78,8 +78,8 @@ __global__ void kernelForecasts(int nThreads, CUDARep cudarep, float* dForecasti
 			estimation /= accepted;
 
 		//				Remove this for other forecast problem -- rain forecast
-		//				if (estimation < 0)
-		//					estimation = 0;
+		if (estimation < 0)
+			estimation = 0;
 
 		//predicteds.push_back(estimation);
 		predicted[offset + pa] = estimation;
