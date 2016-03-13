@@ -84,13 +84,10 @@ __host__ void transferRep(const RepEFP& rep, CUDARep& cudarep)
 		cudarep.h_singleFuzzyRS[i].PERTINENCEFUNC = rep.singleFuzzyRS[i][PERTINENCEFUNC];
 	}
 
-
-
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) &cudarep.d_singleIndex, sizeof(val2) * cudarep.size));
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) &cudarep.d_singleFuzzyRS, sizeof(val6) * cudarep.size));
 	CUDA_CHECK_RETURN(cudaMemcpy(cudarep.d_singleIndex, cudarep.h_singleIndex, sizeof(val2) * cudarep.size, cudaMemcpyHostToDevice));
 	CUDA_CHECK_RETURN(cudaMemcpy(cudarep.d_singleFuzzyRS, cudarep.h_singleFuzzyRS, sizeof(val6) * cudarep.size, cudaMemcpyHostToDevice));
-
 
 }
 
@@ -247,28 +244,32 @@ __host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dFore
 		allForecasts.erase(allForecasts.begin() + allForecasts.size() - nExtraForecasts, allForecasts.end());
 	}
 
+	free(hrForecasts);
+
 	return allForecasts;
 }
 
-vector<double> gpuTrainingSetForecasts(const RepEFP& rep, int maxLag, int stepsAhead, const int aprox, float* dForecastings, int* dfSize, int* hfSize,int datasize,const float* hForecastings)
+vector<double> gpuTrainingSetForecasts(const RepEFP& rep, int maxLag, int stepsAhead, const int aprox, float* dForecastings, int* dfSize, int* hfSize, int datasize, const float* hForecastings)
 {
 
 	CUDARep cudarep;
 
 	transferRep(rep, cudarep);
 
-
 //	CUDA_CHECK_RETURN(cudaMalloc((void** ) dForecastings, sizeof(float) * datasize));
 
 	initializeCudaItems(datasize, 1, hfSize, hForecastings, &dForecastings, &dfSize);
 
-
+//	vector<double> vr ;
 	vector<double> vr = returnTrainingSetForecasts(cudarep, dForecastings, dfSize, hfSize, maxLag, stepsAhead, aprox);
 
-	//CUDA_CHECK_RETURN(cudaDeviceReset());
+//	CUDA_CHECK_RETURN(cudaDeviceReset());
 	cudaFree(dForecastings);
 	cudaFree(dfSize);
-
+	cudaFree(cudarep.d_singleIndex);
+	cudaFree(cudarep.d_singleFuzzyRS);
+	free(cudarep.h_singleIndex);
+	free(cudarep.h_singleFuzzyRS);
 
 	return vr;
 }

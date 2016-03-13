@@ -23,7 +23,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 	RandGenMersenneTwister rg;
 	//long  1412730737
 	long seed = time(NULL); //CalibrationMode
-	//seed = 9;
+	seed = 9;
 	cout << "Seed = " << seed << endl;
 	srand(seed);
 	rg.setSeed(seed);
@@ -159,7 +159,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 		// ============ FORCES ======================
 //		initialDesv = 10;
 //		mutationDesv = 20;
-		int mu = 100;
+		int mu = 10;
 		int lambda = mu * 6;
 		int evalFOMinimizer = MAPE_INDEX;
 		int contructiveNumberOfRules = 100;
@@ -197,17 +197,16 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 
 
 		int nSA = forecastingHorizonteMinutes/granularityMin;
-		nSA = 60;
+		nSA = 1;
+		cout<<"forcing number of steps ahead nSA - line 200"<<endl;
 		problemParam.setStepsAhead(nSA);
 		int stepsAhead = problemParam.getStepsAhead();
 
-		int nTrainningDays = 7;
+		int nTrainningDays = 3;
 		double pointsPerHour = 60.0/ granularityMin;
 
 		cout<<"pointsPerHour:"<<pointsPerHour<<endl;
-		cout<<granularityMin<<endl;
-
-		getchar();
+		cout<<"granularityMin:"<<granularityMin<<endl;
 
 		//========SET PROBLEM MAXIMUM LAG ===============
 //		problemParam.setMaxLag(pointsPerHour*24*3); // with maxLag equals to 2 you only lag K-1 as option

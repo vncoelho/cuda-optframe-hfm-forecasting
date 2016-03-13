@@ -60,7 +60,7 @@ public:
 		{
 
 			times = data[indexData].first;
-			watts = data[indexData].second;
+			watts = data[indexData].second * 1000000;
 
 //			cout<<indexData<<endl;
 //			getchar();

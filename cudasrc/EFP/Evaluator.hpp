@@ -481,14 +481,13 @@ public:
 
 	vector<double> returnTrainingSetForecasts(const RepEFP& rep)
 	{
-
-		Timer t;
-		int nForTargetFile = vForecastings[0].size();
 		int maxLag = problemParam.getMaxLag();
-		int nSamples = nForTargetFile - maxLag;
-
 		//Only GPU Evaluator TODO
-//		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
+		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
+		Timer t;
+
+		int nForTargetFile = vForecastings[0].size();
+		int nSamples = nForTargetFile - maxLag;
 
 		vector<double> allForecasts;
 
@@ -506,6 +505,9 @@ public:
 			int nExtraForecasts = allForecasts.size() - nSamples;
 			allForecasts.erase(allForecasts.begin() + allForecasts.size() - nExtraForecasts, allForecasts.end());
 		}
+
+		//return allForecasts;
+
 
 		// CALL GPU!!!
 //		cout << "CPU finished with " << allForecasts.size() << " VALUES!" << endl;
@@ -543,7 +545,7 @@ public:
 //		}
 
 		//TODO funcEVAL
-		if (numberEval % 1 == 0)
+		if (numberEval % 10 == 0)
 		{
 			cout << "Average CPU: " << avgTimeCPU / numberEval << " ms" << endl;
 			cout << "Average GPU: " << avgTimeGPU / numberEval << " ms" << endl;
