@@ -488,7 +488,7 @@ public:
 		int nSamples = nForTargetFile - maxLag;
 
 		//Only GPU Evaluator TODO
-		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
+//		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
 
 		vector<double> allForecasts;
 
@@ -524,16 +524,26 @@ public:
 //		if(vgpu != allForecasts)
 //		{
 //			cout<<"ERROR ON EVALUATOR ! Different Evaluation from CPU and GPU!!!"<<endl;
-//			cout<<vgpu.size()<<endl;
+//			int gpuSamples = vgpu.size();
+//			cout<<gpuSamples<<endl;
 //			cout<<allForecasts.size()<<endl;
-//			cout<<vgpu<<endl;
-//			cout<<allForecasts<<endl;
+//			double sumGPU =0;
+//			double sumCPU =0;
+//			for(int s=0;s<gpuSamples;s++)
+//			{
+//				sumGPU +=	vgpu[s];
+//				sumCPU +=	allForecasts[s];
+//			}
+//			cout<<"averageGPU forecasts: "<<sumGPU/gpuSamples<<endl;
+//			cout<<"averageGPU forecasts: "<<sumCPU/gpuSamples<<endl;
+////			cout<<vgpu<<endl;
+////			cout<<allForecasts<<endl;
 //
 //			getchar();
 //		}
 
 		//TODO funcEVAL
-		if (numberEval % 100 == 0)
+		if (numberEval % 1 == 0)
 		{
 			cout << "Average CPU: " << avgTimeCPU / numberEval << " ms" << endl;
 			cout << "Average GPU: " << avgTimeGPU / numberEval << " ms" << endl;

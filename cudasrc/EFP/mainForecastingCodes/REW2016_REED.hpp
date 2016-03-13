@@ -37,13 +37,14 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 
 	const char* instance = argv[1];
 	const char* outputFile = argv[2];
-	int granularityMin = atoi(argv[3]);
+	double granularityMin = atoi(argv[3]);
 	int argvforecastingHorizonteMinutes = atoi(argv[4]);
 	int argvTimeES = atoi(argv[5]);
 
 	int forecastingHorizonteMinutes = argvforecastingHorizonteMinutes;
 	string nomeOutput = outputFile;
 	string nomeInstace = instance;
+	granularityMin = 1/60.0;
 
 	if(forecastingHorizonteMinutes < granularityMin)
 	{
@@ -196,14 +197,21 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 
 
 		int nSA = forecastingHorizonteMinutes/granularityMin;
+		nSA = 60;
 		problemParam.setStepsAhead(nSA);
 		int stepsAhead = problemParam.getStepsAhead();
 
 		int nTrainningDays = 7;
 		double pointsPerHour = 60.0/ granularityMin;
 
+		cout<<"pointsPerHour:"<<pointsPerHour<<endl;
+		cout<<granularityMin<<endl;
+
+		getchar();
+
 		//========SET PROBLEM MAXIMUM LAG ===============
-		problemParam.setMaxLag(pointsPerHour*24*3); // with maxLag equals to 2 you only lag K-1 as option
+//		problemParam.setMaxLag(pointsPerHour*24*3); // with maxLag equals to 2 you only lag K-1 as option
+		problemParam.setMaxLag(pointsPerHour); // with maxLag equals to 2 you only lag K-1 as option
 		int maxLag = problemParam.getMaxLag();
 
 		//If maxUpperLag is greater than 0 model uses predicted data
@@ -227,6 +235,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 		cout << "#granularityMin: " << granularityMin << endl << endl;
 
 		int timeES = argvTimeES;
+		timeES = 1200;
 		vector<double> foIndicatorCalibration;
 		vector<double> vectorOfForecasts;
 		double averageError = 0;
