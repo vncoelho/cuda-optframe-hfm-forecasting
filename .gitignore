@@ -6,6 +6,4 @@ app_*
 .cproject
 .settings
 /Debug
-*.d
 
-/Release
