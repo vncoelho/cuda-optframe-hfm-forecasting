@@ -6,7 +6,6 @@ app_*
 .cproject
 .settings
 /Debug
-*.mk
 *.d
 =======
 microGridCalibration

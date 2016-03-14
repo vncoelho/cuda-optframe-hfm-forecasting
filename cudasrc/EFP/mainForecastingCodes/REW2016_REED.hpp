@@ -221,7 +221,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 //		int nTotalForecastingsTrainningSet = maxLag + nTrainningRounds * stepsAhead;
 		int nTotalForecastingsTrainningSet = maxLag + numberOfTrainingPoints;
 
-		nTotalForecastingsTrainningSet = 10000 - nSA;
+		nTotalForecastingsTrainningSet = 100000 - nSA;
 
 		int beginTrainingSet = 1;
 
