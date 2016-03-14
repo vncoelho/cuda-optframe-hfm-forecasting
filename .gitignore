@@ -7,7 +7,5 @@ app_*
 .settings
 /Debug
 *.d
-=======
-microGridCalibration
-INSTANC*
 
+/Release

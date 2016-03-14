@@ -29,10 +29,11 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 	srand(seed);
 	rg.setSeed(seed);
 
-	if (argc != 6)
+	if (argc != 8)
 	{
 		cout << "Parametros incorretos!" << endl;
-		cout << "Os parametros esperados sao: instance output granularidade timeES argvforecastingHorizonteMinutes" << endl;
+		cout << "Os parametros esperados sao: 1- instance 2- output 3- granularidade 4-argvforecastingHorizonteMinutes 5-timeES "<<
+				"\n SPEEDUP: 6- samplesTraining set 7-argNSA" << endl;
 		exit(1);
 	}
 
@@ -41,6 +42,8 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 	double granularityMin = atoi(argv[3]);
 	int argvforecastingHorizonteMinutes = atoi(argv[4]);
 	int argvTimeES = atoi(argv[5]);
+	int argSamplesTrainingSet = atoi(argv[6]);
+	int argNSA = atoi(argv[7]);
 
 	int forecastingHorizonteMinutes = argvforecastingHorizonteMinutes;
 	string nomeOutput = outputFile;
@@ -59,7 +62,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 	cout << "Parametros:" << endl;
 	cout << "nomeOutput=" << nomeOutput << endl;
 
-	treatREEDDataset alexandreTreatObj;
+	/*treatREEDDataset alexandreTreatObj;
 
 	vector<pair<double, double> > datasetDemandCut = alexandreTreatObj.cutData("./REED/channel_1.dat", "REED/saida.dat");
 	cout << "data has ben cut with success" << endl;
@@ -77,7 +80,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 	//cout<<dataset60Seconds<<endl;
 	cout << "data saved with sucess" << endl;
 
-	alexandreTreatObj.createInstance(datasetWithSpecificGranularity, "./REED/instance");
+	alexandreTreatObj.createInstance(datasetWithSpecificGranularity, "./REED/instance");*/
 //	getchar();
 //	getchar();
 
@@ -197,7 +200,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 
 		int nSA = forecastingHorizonteMinutes / granularityMin;
 		cout << "forcing number of steps ahead nSA - line 200" << endl;
-		nSA = 1;
+		nSA = argNSA;
 		problemParam.setStepsAhead(nSA);
 		int stepsAhead = problemParam.getStepsAhead();
 
@@ -209,7 +212,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 
 		//========SET PROBLEM MAXIMUM LAG ===============
 //		problemParam.setMaxLag(pointsPerHour*24*3); // with maxLag equals to 2 you only lag K-1 as option
-		problemParam.setMaxLag(pointsPerHour); // with maxLag equals to 2 you only lag K-1 as option
+		problemParam.setMaxLag(4000); // with maxLag equals to 2 you only lag K-1 as option
 		int maxLag = problemParam.getMaxLag();
 
 		//If maxUpperLag is greater than 0 model uses predicted data
@@ -221,7 +224,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 //		int nTotalForecastingsTrainningSet = maxLag + nTrainningRounds * stepsAhead;
 		int nTotalForecastingsTrainningSet = maxLag + numberOfTrainingPoints;
 
-		nTotalForecastingsTrainningSet = 100000 - nSA;
+		nTotalForecastingsTrainningSet = argSamplesTrainingSet - nSA;
 
 		int beginTrainingSet = 1;
 

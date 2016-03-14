@@ -485,7 +485,7 @@ public:
 		//Only GPU Evaluator TODO
 		//return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
 		Timer t;
-
+		double timeCPUIter;
 		int nForTargetFile = vForecastings[0].size();
 		int nSamples = nForTargetFile - maxLag;
 
@@ -510,16 +510,22 @@ public:
 
 		// CALL GPU!!!
 //		cout << "CPU finished with " << allForecasts.size() << " VALUES!" << endl;
-		avgTimeCPU += t.inMilliSecs();
+		timeCPUIter = t.inMilliSecs();
+		if (numberEval > 0)
+			avgTimeCPU += timeCPUIter;
 //		cout << "CPU: " << t.inMilliSecs() << " ms" << endl;
 //		cout << "CALL GPU!" << endl;
 		Timer tgpu;
+		double timeGPUIter;
 
 		vector<double> vgpu = gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
 
 //		cout << "GPU finished with " << vgpu.size() << " VALUES!" << endl<< endl;
 //		cout << "GPU: " << tgpu.inMilliSecs() << " ms" << endl << endl;
-		avgTimeGPU += tgpu.inMilliSecs();
+		timeGPUIter = tgpu.inMilliSecs();
+		if (numberEval > 0)
+			avgTimeGPU += timeGPUIter;
+
 		numberEval += 1;
 
 //		if(vgpu != allForecasts)
@@ -544,15 +550,25 @@ public:
 //		}
 
 		//TODO funcEVAL
-		if (numberEval % 1000 == 0)
+		if (numberEval > 1)
 		{
-			cout << "Average CPU: " << avgTimeCPU / numberEval << " ms" << endl;
-			cout << "Average GPU: " << avgTimeGPU / numberEval << " ms" << endl;
+			string speedUpFile = "./allEvaluations";
+			FILE* fResults = fopen(speedUpFile.c_str(), "a");
+
+			fprintf(fResults, "%.3f\t%.3f\t%d\t%d\t", timeGPUIter, timeCPUIter, nSamples, problemParam.getStepsAhead());
+			fprintf(fResults, "\n");
+			fclose(fResults);
+		}
+
+		if (((numberEval - 1) % 1000 == 0) && numberEval  > 1 )
+		{
+			cout << "Average CPU: " << avgTimeCPU / (numberEval - 1) << " ms" << endl;
+			cout << "Average GPU: " << avgTimeGPU / (numberEval - 1) << " ms" << endl;
 			cout << "#funcEvaluations: " << numberEval << endl << endl;
 
 			string speedUpFile = "./speedUpFile";
 			FILE* fResults = fopen(speedUpFile.c_str(), "a");
-			fprintf(fResults, "%.3f\t%.3f\t%d\t", avgTimeGPU / numberEval, avgTimeCPU / numberEval, numberEval);
+			fprintf(fResults, "%.3f\t%.3f\t%d\t", avgTimeGPU / (numberEval - 1), avgTimeCPU / (numberEval - 1), (numberEval - 1));
 			fprintf(fResults, "\n");
 			fclose(fResults);
 			cout << "Time CPU e GPU eval has been reported with success. \n Exiting..." << endl;

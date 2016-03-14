@@ -181,6 +181,8 @@ __host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dFore
 	int threadsPerBlock = 256; // tx
 	int blocks;
 	CUDA_CHECK_RETURN(cudaOccupancyMaxPotentialBlockSize(&blocks, &threadsPerBlock, kernelForecasts, 0, 0));
+//	int threadsPerBlock = 768; // tx
+//	int blocks=126;
 
 	blocks = ceil(nThreads / float(threadsPerBlock));
 
@@ -204,16 +206,15 @@ __host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dFore
 	float* predicted;
 	CUDA_CHECK_RETURN(cudaMalloc((void** ) &predicted, sizeof(float) * rsize));
 
-	cudaEvent_t start, stop;
-	cudaEventCreate(&start);
-	cudaEventCreate(&stop);
-
-	cudaEventRecord(start, 0); //where 0 is the default stream
+//	cudaEvent_t start, stop;
+//	cudaEventCreate(&start);
+//	cudaEventCreate(&stop);
+//	cudaEventRecord(start, 0); //where 0 is the default stream
 	kernelForecasts<<<blocks, threadsPerBlock>>>(nThreads, cudarep, dForecastings, dfSize, maxLag, stepsAhead, aprox, predicted);
 	CUDA_CHECK_RETURN(cudaThreadSynchronize());	// Wait for the GPU launched work to complete
 	CUDA_CHECK_RETURN(cudaGetLastError());
-	cudaEventRecord(stop, 0);
-	cudaEventSynchronize(stop);
+//	cudaEventRecord(stop, 0);
+//	cudaEventSynchronize(stop);
 
 	CUDA_CHECK_RETURN(cudaMemcpy(hrForecasts, predicted, sizeof(float) * rsize, cudaMemcpyDeviceToHost));
 	cudaFree(predicted);
