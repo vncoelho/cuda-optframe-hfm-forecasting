@@ -483,7 +483,7 @@ public:
 	{
 		int maxLag = problemParam.getMaxLag();
 		//Only GPU Evaluator TODO
-		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
+		//return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
 		Timer t;
 
 		int nForTargetFile = vForecastings[0].size();
@@ -507,7 +507,6 @@ public:
 		}
 
 		//return allForecasts;
-
 
 		// CALL GPU!!!
 //		cout << "CPU finished with " << allForecasts.size() << " VALUES!" << endl;
@@ -545,11 +544,20 @@ public:
 //		}
 
 		//TODO funcEVAL
-		if (numberEval % 10 == 0)
+		if (numberEval % 1000 == 0)
 		{
 			cout << "Average CPU: " << avgTimeCPU / numberEval << " ms" << endl;
 			cout << "Average GPU: " << avgTimeGPU / numberEval << " ms" << endl;
 			cout << "#funcEvaluations: " << numberEval << endl << endl;
+
+			string speedUpFile = "./speedUpFile";
+			FILE* fResults = fopen(speedUpFile.c_str(), "a");
+			fprintf(fResults, "%.3f\t%.3f\t%d\t", avgTimeGPU / numberEval, avgTimeCPU / numberEval, numberEval);
+			fprintf(fResults, "\n");
+			fclose(fResults);
+			cout << "Time CPU e GPU eval has been reported with success. \n Exiting..." << endl;
+			exit(1);
+
 		}
 //		getchar();
 //		assert(allForecasts.size() == vgpu.size());

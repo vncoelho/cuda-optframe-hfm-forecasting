@@ -130,7 +130,7 @@ public:
 	// Autocorrelation function
 	//void ACF(const double *v, const size_t N, acorrInfo &info);
 
-	void ACF(const double *v, const size_t N, acorrInfo &info)
+	void ACF(const vector<double>& v, const size_t N, acorrInfo &info)
 	{
 		if (!info.points().empty())
 		{

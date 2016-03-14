@@ -175,17 +175,21 @@ public:
 		{
 			int nTotalPoints = data[nEXV].size();
 
-			double acfData[nTotalPoints];
-			for (int i = 0; i < nTotalPoints; i++)
-				acfData[i] = data[nEXV].at(i);
-
+			//TODO check why the next line could not receive size huger than 1 milion
+//			double acfData[nTotalPoints];
+//
+//			cout<<"nTotalPoints: "<<nTotalPoints<<endl;
+//			getchar();
+//			for (int i = 0; i < nTotalPoints; i++)
+//				acfData[i] = data[nEXV].at(i);
+//
+//			cout<<"ok until here"<<endl;
+//			getchar();
 			acorrInfo info;
 			autocorr acf(-1, lags);
-			acf.ACF(acfData, nTotalPoints, info);
+			acf.ACF(data[nEXV], nTotalPoints, info);
 			acfPoints.push_back(info.points());
 
-//			cout<<acfPoints<<endl;
-//			getchar();
 		}
 
 		vector<vector<pair<double, int> > > acfGreedy(numberExplanatoryVariables);

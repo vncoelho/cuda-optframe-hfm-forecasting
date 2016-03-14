@@ -23,6 +23,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 	RandGenMersenneTwister rg;
 	//long  1412730737
 	long seed = time(NULL); //CalibrationMode
+	//force seed
 	seed = 9;
 	cout << "Seed = " << seed << endl;
 	srand(seed);
@@ -44,12 +45,13 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 	int forecastingHorizonteMinutes = argvforecastingHorizonteMinutes;
 	string nomeOutput = outputFile;
 	string nomeInstace = instance;
+	//force granularity
 	granularityMin = 1/60.0;
 
-	if(forecastingHorizonteMinutes < granularityMin)
+	if (forecastingHorizonteMinutes < granularityMin)
 	{
-		cout<<"EXIT WITH ERROR! Forecasting horizon lower than granularity"<<endl;
-		cout<<"granularityMin: "<<granularityMin<<"\t forecastingHorizonteMinutes:"<<forecastingHorizonteMinutes<<endl;
+		cout << "EXIT WITH ERROR! Forecasting horizon lower than granularity" << endl;
+		cout << "granularityMin: " << granularityMin << "\t forecastingHorizonteMinutes:" << forecastingHorizonteMinutes << endl;
 		return 0;
 	}
 
@@ -57,9 +59,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 	cout << "Parametros:" << endl;
 	cout << "nomeOutput=" << nomeOutput << endl;
 
-
 	treatREEDDataset alexandreTreatObj;
-
 
 	vector<pair<double, double> > datasetDemandCut = alexandreTreatObj.cutData("./REED/channel_1.dat", "REED/saida.dat");
 	cout << "data has ben cut with success" << endl;
@@ -195,18 +195,17 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 		ProblemParameters problemParam;
 		//ProblemParameters problemParam(vParametersFiles[randomParametersFiles]);
 
-
-		int nSA = forecastingHorizonteMinutes/granularityMin;
+		int nSA = forecastingHorizonteMinutes / granularityMin;
+		cout << "forcing number of steps ahead nSA - line 200" << endl;
 		nSA = 1;
-		cout<<"forcing number of steps ahead nSA - line 200"<<endl;
 		problemParam.setStepsAhead(nSA);
 		int stepsAhead = problemParam.getStepsAhead();
 
-		int nTrainningDays = 3;
-		double pointsPerHour = 60.0/ granularityMin;
+		int nTrainningDays = 10;
+		double pointsPerHour = 60.0 / granularityMin;
 
-		cout<<"pointsPerHour:"<<pointsPerHour<<endl;
-		cout<<"granularityMin:"<<granularityMin<<endl;
+		cout << "pointsPerHour:" << pointsPerHour << endl;
+		cout << "granularityMin:" << granularityMin << endl;
 
 		//========SET PROBLEM MAXIMUM LAG ===============
 //		problemParam.setMaxLag(pointsPerHour*24*3); // with maxLag equals to 2 you only lag K-1 as option
@@ -221,6 +220,8 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 		int numberOfTrainingPoints = 24 * pointsPerHour * nTrainningDays; //24hour * 7days * 4 points per hour
 //		int nTotalForecastingsTrainningSet = maxLag + nTrainningRounds * stepsAhead;
 		int nTotalForecastingsTrainningSet = maxLag + numberOfTrainingPoints;
+
+		nTotalForecastingsTrainningSet = 1209538 - nSA;
 
 		int beginTrainingSet = 1;
 
@@ -240,6 +241,15 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 		double averageError = 0;
 		int countSlidingWindows = 0;
 
+		//SPEED UP teste
+		string speedUpFile = "./speedUpFile";
+		FILE* fSpeedUp = fopen(speedUpFile.c_str(), "a");
+		int speedUpNTR = (nTotalForecastingsTrainningSet - maxLag) / nSA;
+		fprintf(fSpeedUp, "%d\t%d\t%d\t", nSA, nTotalForecastingsTrainningSet, speedUpNTR);
+		fclose(fSpeedUp);
+
+		///END SPEED UP TEST
+
 		for (int begin = 0; (nTotalForecastingsTrainningSet + begin + stepsAhead) <= totalNumberOfSamplesTarget; begin += stepsAhead)
 		{
 			vector<vector<double> > trainningSet; // trainningSetVector
@@ -251,8 +261,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 			sol = forecastObject.run(timeES, 0, 0);
 
 			vector<vector<double> > validationSet; //validation set for calibration
-			cout << "blind test begin: " << nTotalForecastingsTrainningSet + begin
-					<< " end:" << nTotalForecastingsTrainningSet + begin + stepsAhead << endl;
+			cout << "blind test begin: " << nTotalForecastingsTrainningSet + begin << " end:" << nTotalForecastingsTrainningSet + begin + stepsAhead << endl;
 
 			validationSet.push_back(rF.getPartsForecastsBeginToEnd(0, nTotalForecastingsTrainningSet + begin - maxLag, maxLag + stepsAhead));
 			vector<double> foIndicatorsWeeks;
