@@ -6,8 +6,9 @@
 
 #include "Representation.h"
 
-vector<double> gpuTrainingSetForecasts(const RepEFP& rep, int maxLag, int stepsAhead, const int aprox, float* dForecastings, int* dfSize,int* hfSize,int datasize,const float* hForecastings);
+vector<double> gpuTrainingSetForecasts(const RepEFP& rep, int maxLag, int stepsAhead, const int aprox, float* dForecastings, int* dfSize, int* hfSize, int datasize, const float* hForecastings);
 
 void initializeCudaItems(int datasize, int vForecastingSize, int* hfSize, const float* hForecastings, float** dForecastings, int** dfSize);
+void freeInitializeCudaItems(float** dForecastings, int** dfSize);
 
 #endif /* CUDAEVAL_H_ */

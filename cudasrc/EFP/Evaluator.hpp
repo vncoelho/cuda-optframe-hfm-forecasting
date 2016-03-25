@@ -103,12 +103,15 @@ public:
 
 		assert(k == datasize); // verify that all data is copied
 
-		//initializeCudaItems(datasize, vForecastings.size(), hfSize, hForecastings, &dForecastings, &dfSize);
+		cout << "Evaluator initializatin cuda.....vForecastings.size(): " << vForecastings.size() << endl;
+		initializeCudaItems(datasize, vForecastings.size(), hfSize, hForecastings, &dForecastings, &dfSize);
 	}
 
 	virtual ~EFPEvaluator()
 	{
-
+		//TODO check with IGOR
+		cout<<"calling cudaFree!...It may be causing errors"<<endl;
+		freeInitializeCudaItems(&dForecastings, &dfSize);
 	}
 
 	int getKValue(const int K, const int file, const int i, const int pa, const vector<vector<double> >& vForecastings, const vector<double>& predicteds)
@@ -483,7 +486,7 @@ public:
 	{
 		int maxLag = problemParam.getMaxLag();
 		//Only GPU Evaluator TODO
-		//return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
+		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
 		Timer t;
 		double timeCPUIter;
 		int nForTargetFile = vForecastings[0].size();
@@ -560,7 +563,7 @@ public:
 			fclose(fResults);
 		}
 
-		if (((numberEval - 1) % 1000 == 0) && numberEval  > 1 )
+		if (((numberEval - 1) % 1000 == 0) && numberEval > 1)
 		{
 			cout << "Average CPU: " << avgTimeCPU / (numberEval - 1) << " ms" << endl;
 			cout << "Average GPU: " << avgTimeGPU / (numberEval - 1) << " ms" << endl;
@@ -572,6 +575,7 @@ public:
 			fprintf(fResults, "\n");
 			fclose(fResults);
 			cout << "Time CPU e GPU eval has been reported with success. \n Exiting..." << endl;
+			freeInitializeCudaItems(&dForecastings, &dfSize);
 			exit(1);
 
 		}

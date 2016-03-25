@@ -170,6 +170,12 @@ __host__ void initializeCudaItems(int datasize, int vForecastingSize, int* hfSiz
 
 }
 
+__host__ void freeInitializeCudaItems(float** dForecastings, int** dfSize)
+{
+	cudaFree(dForecastings);
+	cudaFree(dfSize);
+}
+
 __host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dForecastings, int* dfSize, int* hfSize, int maxLag, int stepsAhead, const int aprox)
 {
 
@@ -259,14 +265,14 @@ vector<double> gpuTrainingSetForecasts(const RepEFP& rep, int maxLag, int stepsA
 
 //	CUDA_CHECK_RETURN(cudaMalloc((void** ) dForecastings, sizeof(float) * datasize));
 
-	initializeCudaItems(datasize, 1, hfSize, hForecastings, &dForecastings, &dfSize);
+//	initializeCudaItems(datasize, 1, hfSize, hForecastings, &dForecastings, &dfSize);
 
 //	vector<double> vr ;
 	vector<double> vr = returnTrainingSetForecasts(cudarep, dForecastings, dfSize, hfSize, maxLag, stepsAhead, aprox);
 
 //	CUDA_CHECK_RETURN(cudaDeviceReset());
-	cudaFree(dForecastings);
-	cudaFree(dfSize);
+//	cudaFree(dForecastings);
+//	cudaFree(dfSize);
 	cudaFree(cudarep.d_singleIndex);
 	cudaFree(cudarep.d_singleFuzzyRS);
 	free(cudarep.h_singleIndex);

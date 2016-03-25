@@ -82,7 +82,6 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 
 	alexandreTreatObj.createInstance(datasetWithSpecificGranularity, "./REED/instance");*/
 //	getchar();
-//	getchar();
 
 //dotest();
 //getchar();
