@@ -13,6 +13,20 @@ RM := rm -rf
 -include cudasrc/EFP/mainForecastingCodes/subdir.mk
 -include cudasrc/EFP/subdir.mk
 -include OptFrame/Scanner++/subdir.mk
+-include Examples/subdir.mk
+-include Examples/TSP2/subdir.mk
+-include Examples/TSP/subdir.mk
+-include Examples/ParallelTSP/subdir.mk
+-include Examples/PN/subdir.mk
+-include Examples/PMedCap/subdir.mk
+-include Examples/OptHScheduling/subdir.mk
+-include Examples/MODM/subdir.mk
+-include Examples/EternityII/subdir.mk
+-include Examples/EFP/mainForecastingCodes/subdir.mk
+-include Examples/EFP/subdir.mk
+
+OS_SUFFIX := $(subst Linux,linux,$(subst Darwin/x86_64,darwin,$(shell uname -s)/$(shell uname -m)))
+
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -41,6 +55,14 @@ endif
 
 -include ../makefile.defs
 
+# OpenGL+GLUT OS-specific define
+ifeq ($(shell uname -s),Darwin)
+GLUT_LIBS := -Xlinker -framework -Xlinker GLUT -Xlinker -framework -Xlinker OpenGL
+else
+GLUT_LIBS := -lGL -lGLU -lglut 
+endif
+
+
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
@@ -50,7 +72,7 @@ all: cuda-optframe-previsao
 cuda-optframe-previsao: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: NVCC Linker'
-	/usr/local/cuda-6.5/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_20 -link -o  "cuda-optframe-previsao" $(OBJS) $(USER_OBJS) $(LIBS)
+	/usr/local/cuda-8.0/bin/nvcc --cudart static --relocatable-device-code=false -gencode arch=compute_30,code=compute_30 -gencode arch=compute_30,code=sm_30 -link -o  "cuda-optframe-previsao" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

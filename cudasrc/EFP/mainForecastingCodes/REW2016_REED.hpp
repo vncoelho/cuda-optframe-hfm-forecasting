@@ -20,6 +20,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 {
 	cout << "Welcome to REW2016 -- REED " << endl;
 
+
 	RandGenMersenneTwister rg;
 	//long  1412730737
 	long seed = time(NULL); //CalibrationMode
@@ -34,6 +35,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 		cout << "Parametros incorretos!" << endl;
 		cout << "Os parametros esperados sao: 1- instance 2- output 3- granularidade 4-argvforecastingHorizonteMinutes 5-timeES "<<
 				"\n SPEEDUP: 6- samplesTraining set 7-argNSA" << endl;
+		// ./REED/channel_1.dat ./UBUNTU1604 60	24	120 1000 24
 		exit(1);
 	}
 
@@ -60,6 +62,8 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 
 	//===================================
 	cout << "Parametros:" << endl;
+	cout << "nomeOutput=" << nomeOutput << endl;
+	cout << "granularityMin=" << granularityMin << endl;
 	cout << "nomeOutput=" << nomeOutput << endl;
 
 	/*treatREEDDataset alexandreTreatObj;
@@ -198,7 +202,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 		//ProblemParameters problemParam(vParametersFiles[randomParametersFiles]);
 
 		int nSA = forecastingHorizonteMinutes / granularityMin;
-		cout << "forcing number of steps ahead nSA - line 200" << endl;
+		//cout << "forcing number of steps ahead nSA - line 200 - Than forecastingHorizonteMinutes is not used" << endl;
 		nSA = argNSA;
 		problemParam.setStepsAhead(nSA);
 		int stepsAhead = problemParam.getStepsAhead();
@@ -244,7 +248,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 		int countSlidingWindows = 0;
 
 		//SPEED UP teste
-		string speedUpFile = "./speedUpFile";
+		string speedUpFile = "./speedUpFile_SI";
 		FILE* fSpeedUp = fopen(speedUpFile.c_str(), "a");
 		int speedUpNTR = (nTotalForecastingsTrainningSet - maxLag) / nSA;
 		fprintf(fSpeedUp, "%d\t%d\t%d\t", nSA, nTotalForecastingsTrainningSet, speedUpNTR);
@@ -301,7 +305,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 		parametersResults.push_back(timeES);
 		parametersResults.push_back(seed);
 
-		string calibrationFile = "./resultsREW2016_REED";
+		string calibrationFile = "./resultsREW2016_REED_SI";
 
 		FILE* fResults = fopen(calibrationFile.c_str(), "a");
 
@@ -378,6 +382,7 @@ int rew2016CUDADemandForecasting(int argc, char **argv)
 ////		vSolutionsBatches.push_back(sol->first);
 	}
 
+	cout<<"REW apen SI finished!"<<endl;
 	return 0;
 }
 

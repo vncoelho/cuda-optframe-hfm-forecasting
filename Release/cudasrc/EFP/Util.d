@@ -1,18 +1,20 @@
-cudasrc/Util.o : ../cudasrc/EFP/Util.cpp \
+cudasrc/EFP/Util.o : ../cudasrc/EFP/Util.cpp \
     /usr/include/stdc-predef.h \
     ../cudasrc/EFP/Util.h \
-    /usr/include/c++/4.8/cmath \
-    /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h \
-    /usr/include/x86_64-linux-gnu/c++/4.8/bits/os_defines.h \
+    /usr/include/c++/5/cmath \
+    /usr/include/x86_64-linux-gnu/c++/5/bits/c++config.h \
+    /usr/include/x86_64-linux-gnu/c++/5/bits/os_defines.h \
     /usr/include/features.h \
     /usr/include/x86_64-linux-gnu/sys/cdefs.h \
     /usr/include/x86_64-linux-gnu/bits/wordsize.h \
     /usr/include/x86_64-linux-gnu/gnu/stubs.h \
     /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
-    /usr/include/x86_64-linux-gnu/c++/4.8/bits/cpu_defines.h \
-    /usr/include/c++/4.8/bits/cpp_type_traits.h \
-    /usr/include/c++/4.8/ext/type_traits.h \
+    /usr/include/x86_64-linux-gnu/c++/5/bits/cpu_defines.h \
+    /usr/include/c++/5/bits/cpp_type_traits.h \
+    /usr/include/c++/5/ext/type_traits.h \
     /usr/include/math.h \
+    /usr/include/x86_64-linux-gnu/bits/math-vector.h \
+    /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
     /usr/include/x86_64-linux-gnu/bits/huge_val.h \
     /usr/include/x86_64-linux-gnu/bits/huge_valf.h \
     /usr/include/x86_64-linux-gnu/bits/huge_vall.h \

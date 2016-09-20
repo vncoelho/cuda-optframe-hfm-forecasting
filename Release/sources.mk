@@ -29,4 +29,15 @@ cudasrc \
 cudasrc/EFP/mainForecastingCodes \
 cudasrc/EFP \
 OptFrame/Scanner++ \
+Examples \
+Examples/TSP2 \
+Examples/TSP \
+Examples/ParallelTSP \
+Examples/PN \
+Examples/PMedCap \
+Examples/OptHScheduling \
+Examples/MODM \
+Examples/EternityII \
+Examples/EFP/mainForecastingCodes \
+Examples/EFP \
 

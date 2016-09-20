@@ -1,18 +1,18 @@
 cudasrc/EFP/mainForecastingCodes/test.o : ../cudasrc/EFP/mainForecastingCodes/test.cu \
     /usr/include/stdc-predef.h \
-    /usr/local/cuda-6.5/bin/..//include/cuda_runtime.h \
-    /usr/local/cuda-6.5/bin/..//include/host_config.h \
+    /usr/local/cuda-8.0/bin/..//include/cuda_runtime.h \
+    /usr/local/cuda-8.0/bin/..//include/host_config.h \
     /usr/include/features.h \
     /usr/include/x86_64-linux-gnu/sys/cdefs.h \
     /usr/include/x86_64-linux-gnu/bits/wordsize.h \
     /usr/include/x86_64-linux-gnu/gnu/stubs.h \
     /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
-    /usr/local/cuda-6.5/bin/..//include/builtin_types.h \
-    /usr/local/cuda-6.5/bin/..//include/device_types.h \
-    /usr/local/cuda-6.5/bin/..//include/host_defines.h \
-    /usr/local/cuda-6.5/bin/..//include/driver_types.h \
-    /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/limits.h \
-    /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/syslimits.h \
+    /usr/local/cuda-8.0/bin/..//include/builtin_types.h \
+    /usr/local/cuda-8.0/bin/..//include/device_types.h \
+    /usr/local/cuda-8.0/bin/..//include/host_defines.h \
+    /usr/local/cuda-8.0/bin/..//include/driver_types.h \
+    /usr/lib/gcc/x86_64-linux-gnu/5/include-fixed/limits.h \
+    /usr/lib/gcc/x86_64-linux-gnu/5/include-fixed/syslimits.h \
     /usr/include/limits.h \
     /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
     /usr/include/x86_64-linux-gnu/bits/local_lim.h \
@@ -20,16 +20,18 @@ cudasrc/EFP/mainForecastingCodes/test.o : ../cudasrc/EFP/mainForecastingCodes/te
     /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
     /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
     /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-    /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h \
-    /usr/local/cuda-6.5/bin/..//include/surface_types.h \
-    /usr/local/cuda-6.5/bin/..//include/texture_types.h \
-    /usr/local/cuda-6.5/bin/..//include/vector_types.h \
-    /usr/local/cuda-6.5/bin/..//include/channel_descriptor.h \
-    /usr/local/cuda-6.5/bin/..//include/cuda_runtime_api.h \
-    /usr/local/cuda-6.5/bin/..//include/cuda_device_runtime_api.h \
-    /usr/local/cuda-6.5/bin/..//include/driver_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/vector_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/common_functions.h \
+    /usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h \
+    /usr/local/cuda-8.0/bin/..//include/surface_types.h \
+    /usr/local/cuda-8.0/bin/..//include/texture_types.h \
+    /usr/local/cuda-8.0/bin/..//include/vector_types.h \
+    /usr/local/cuda-8.0/bin/..//include/library_types.h \
+    /usr/local/cuda-8.0/bin/..//include/channel_descriptor.h \
+    /usr/local/cuda-8.0/bin/..//include/cuda_runtime_api.h \
+    /usr/local/cuda-8.0/bin/..//include/cuda_device_runtime_api.h \
+    /usr/local/cuda-8.0/bin/..//include/driver_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/vector_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/vector_functions.hpp \
+    /usr/local/cuda-8.0/bin/..//include/common_functions.h \
     /usr/include/string.h \
     /usr/include/xlocale.h \
     /usr/include/x86_64-linux-gnu/bits/string3.h \
@@ -38,17 +40,17 @@ cudasrc/EFP/mainForecastingCodes/test.o : ../cudasrc/EFP/mainForecastingCodes/te
     /usr/include/x86_64-linux-gnu/bits/types.h \
     /usr/include/x86_64-linux-gnu/bits/typesizes.h \
     /usr/include/x86_64-linux-gnu/bits/timex.h \
-    /usr/include/c++/4.8/new \
-    /usr/include/x86_64-linux-gnu/c++/4.8/bits/c++config.h \
-    /usr/include/x86_64-linux-gnu/c++/4.8/bits/os_defines.h \
-    /usr/include/x86_64-linux-gnu/c++/4.8/bits/cpu_defines.h \
-    /usr/include/c++/4.8/exception \
-    /usr/include/c++/4.8/bits/atomic_lockfree_defines.h \
+    /usr/include/c++/5/new \
+    /usr/include/x86_64-linux-gnu/c++/5/bits/c++config.h \
+    /usr/include/x86_64-linux-gnu/c++/5/bits/os_defines.h \
+    /usr/include/x86_64-linux-gnu/c++/5/bits/cpu_defines.h \
+    /usr/include/c++/5/exception \
+    /usr/include/c++/5/bits/atomic_lockfree_defines.h \
     /usr/include/stdio.h \
     /usr/include/libio.h \
     /usr/include/_G_config.h \
     /usr/include/wchar.h \
-    /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdarg.h \
+    /usr/lib/gcc/x86_64-linux-gnu/5/include/stdarg.h \
     /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
     /usr/include/x86_64-linux-gnu/bits/stdio.h \
     /usr/include/x86_64-linux-gnu/bits/stdio2.h \
@@ -71,8 +73,10 @@ cudasrc/EFP/mainForecastingCodes/test.o : ../cudasrc/EFP/mainForecastingCodes/te
     /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
     /usr/include/x86_64-linux-gnu/bits/stdlib.h \
     /usr/include/assert.h \
-    /usr/local/cuda-6.5/bin/..//include/math_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/math_functions.h \
     /usr/include/math.h \
+    /usr/include/x86_64-linux-gnu/bits/math-vector.h \
+    /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
     /usr/include/x86_64-linux-gnu/bits/huge_val.h \
     /usr/include/x86_64-linux-gnu/bits/huge_valf.h \
     /usr/include/x86_64-linux-gnu/bits/huge_vall.h \
@@ -81,27 +85,38 @@ cudasrc/EFP/mainForecastingCodes/test.o : ../cudasrc/EFP/mainForecastingCodes/te
     /usr/include/x86_64-linux-gnu/bits/mathdef.h \
     /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
     /usr/include/x86_64-linux-gnu/bits/mathinline.h \
-    /usr/include/c++/4.8/cmath \
-    /usr/include/c++/4.8/bits/cpp_type_traits.h \
-    /usr/include/c++/4.8/ext/type_traits.h \
-    /usr/include/c++/4.8/cstdlib \
-    /usr/local/cuda-6.5/bin/..//include/math_functions_dbl_ptx3.h \
-    /usr/local/cuda-6.5/bin/..//include/cuda_surface_types.h \
-    /usr/local/cuda-6.5/bin/..//include/cuda_texture_types.h \
-    /usr/local/cuda-6.5/bin/..//include/device_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/sm_11_atomic_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/sm_12_atomic_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/sm_13_double_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/sm_20_atomic_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/sm_32_atomic_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/sm_35_atomic_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/sm_20_intrinsics.h \
-    /usr/local/cuda-6.5/bin/..//include/sm_30_intrinsics.h \
-    /usr/local/cuda-6.5/bin/..//include/sm_32_intrinsics.h \
-    /usr/local/cuda-6.5/bin/..//include/sm_35_intrinsics.h \
-    /usr/local/cuda-6.5/bin/..//include/surface_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/texture_fetch_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/texture_indirect_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/surface_indirect_functions.h \
-    /usr/local/cuda-6.5/bin/..//include/device_launch_parameters.h \
+    /usr/include/c++/5/cmath \
+    /usr/include/c++/5/bits/cpp_type_traits.h \
+    /usr/include/c++/5/ext/type_traits.h \
+    /usr/include/c++/5/cstdlib \
+    /usr/local/cuda-8.0/bin/..//include/math_functions.hpp \
+    /usr/local/cuda-8.0/bin/..//include/math_functions_dbl_ptx3.h \
+    /usr/local/cuda-8.0/bin/..//include/math_functions_dbl_ptx3.hpp \
+    /usr/local/cuda-8.0/bin/..//include/cuda_surface_types.h \
+    /usr/local/cuda-8.0/bin/..//include/cuda_texture_types.h \
+    /usr/local/cuda-8.0/bin/..//include/device_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/device_functions.hpp \
+    /usr/local/cuda-8.0/bin/..//include/device_atomic_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/device_atomic_functions.hpp \
+    /usr/local/cuda-8.0/bin/..//include/device_double_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/device_double_functions.hpp \
+    /usr/local/cuda-8.0/bin/..//include/sm_20_atomic_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/sm_20_atomic_functions.hpp \
+    /usr/local/cuda-8.0/bin/..//include/sm_32_atomic_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/sm_32_atomic_functions.hpp \
+    /usr/local/cuda-8.0/bin/..//include/sm_35_atomic_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/sm_60_atomic_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/sm_60_atomic_functions.hpp \
+    /usr/local/cuda-8.0/bin/..//include/sm_20_intrinsics.h \
+    /usr/local/cuda-8.0/bin/..//include/sm_20_intrinsics.hpp \
+    /usr/local/cuda-8.0/bin/..//include/sm_30_intrinsics.h \
+    /usr/local/cuda-8.0/bin/..//include/sm_30_intrinsics.hpp \
+    /usr/local/cuda-8.0/bin/..//include/sm_32_intrinsics.h \
+    /usr/local/cuda-8.0/bin/..//include/sm_32_intrinsics.hpp \
+    /usr/local/cuda-8.0/bin/..//include/sm_35_intrinsics.h \
+    /usr/local/cuda-8.0/bin/..//include/surface_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/texture_fetch_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/texture_indirect_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/surface_indirect_functions.h \
+    /usr/local/cuda-8.0/bin/..//include/device_launch_parameters.h \
     ../cudasrc/EFP/mainForecastingCodes/test.cuh
