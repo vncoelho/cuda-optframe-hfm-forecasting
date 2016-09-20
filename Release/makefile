@@ -13,17 +13,6 @@ RM := rm -rf
 -include cudasrc/EFP/mainForecastingCodes/subdir.mk
 -include cudasrc/EFP/subdir.mk
 -include OptFrame/Scanner++/subdir.mk
--include Examples/subdir.mk
--include Examples/TSP2/subdir.mk
--include Examples/TSP/subdir.mk
--include Examples/ParallelTSP/subdir.mk
--include Examples/PN/subdir.mk
--include Examples/PMedCap/subdir.mk
--include Examples/OptHScheduling/subdir.mk
--include Examples/MODM/subdir.mk
--include Examples/EternityII/subdir.mk
--include Examples/EFP/mainForecastingCodes/subdir.mk
--include Examples/EFP/subdir.mk
 
 OS_SUFFIX := $(subst Linux,linux,$(subst Darwin/x86_64,darwin,$(shell uname -s)/$(shell uname -m)))
 

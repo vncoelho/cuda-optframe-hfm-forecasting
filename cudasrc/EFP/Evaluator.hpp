@@ -554,16 +554,16 @@ public:
 //			getchar();
 //		}
 
-		//TODO funcEVAL
-		if (numberEval > 1)
-		{
-			string speedUpFile = "./allEvaluations";
-			FILE* fResults = fopen(speedUpFile.c_str(), "a");
-
-			fprintf(fResults, "%.3f\t%.3f\t%d\t%d\t", timeGPUIter, timeCPUIter, nSamples, problemParam.getStepsAhead());
-			fprintf(fResults, "\n");
-			fclose(fResults);
-		}
+//		//TODO funcEVAL
+//		if (numberEval > 1)
+//		{
+//			string speedUpFile = "./allEvaluations";
+//			FILE* fResults = fopen(speedUpFile.c_str(), "a");
+//
+//			fprintf(fResults, "%.3f\t%.3f\t%d\t%d\t", timeGPUIter, timeCPUIter, nSamples, problemParam.getStepsAhead());
+//			fprintf(fResults, "\n");
+//			fclose(fResults);
+//		}
 
 
 		if (((numberEval - 1) % 1000 == 0) && numberEval > 1)
