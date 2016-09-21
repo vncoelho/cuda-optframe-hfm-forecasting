@@ -102,8 +102,11 @@ int main(int argc, char **argv)
 		return r;
 		break;
 
-	case 1000: //Liu Mode Applied Energy, 2014
-		r = rew2016CUDADemandForecasting(argc, argv);
+	case 1000:
+//		r = rew2016CUDADemandForecasting(argc, argv);
+		r = APEN_SI_DemandForecasting(argc, argv);
+//		r = APEN_SI_SpeedUp_DemandForecasting(argc, argv);
+
 		cout << "Program ended successfully in MG Mode" << endl;
 		return r;
 		break;

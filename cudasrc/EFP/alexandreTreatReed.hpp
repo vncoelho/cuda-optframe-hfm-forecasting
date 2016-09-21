@@ -29,6 +29,9 @@ public:
 	void createInstance(vector<pair<double, double> > data, string outputName)
 	{
 		ofstream output;
+
+
+		//oi
 		output.open(outputName.c_str());
 
 		output << data.size() << endl;

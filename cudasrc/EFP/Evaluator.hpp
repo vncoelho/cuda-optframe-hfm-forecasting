@@ -18,6 +18,8 @@
 
 #include "CUDAEval.h"
 
+extern bool SPEED_UP_FLAG;
+
 #define EPSILON_EFP 0.0001
 
 namespace EFP
@@ -110,8 +112,9 @@ public:
 	virtual ~EFPEvaluator()
 	{
 		//TODO check with IGOR
-		cout<<"calling cudaFree!...It may be causing errors"<<endl;
+		cout << "calling cudaFree!...It may be causing errors" << endl;
 		freeInitializeCudaItems(&dForecastings, &dfSize);
+
 	}
 
 	int getKValue(const int K, const int file, const int i, const int pa, const vector<vector<double> >& vForecastings, const vector<double>& predicteds)
@@ -486,8 +489,10 @@ public:
 	{
 		int maxLag = problemParam.getMaxLag();
 		//Only GPU Evaluator TODO
-		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
-
+		if (!SPEED_UP_FLAG)
+			return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
+		cout<<"oi"<<endl;
+		getchar();
 
 		Timer t;
 		double timeCPUIter;
@@ -564,7 +569,6 @@ public:
 //			fprintf(fResults, "\n");
 //			fclose(fResults);
 //		}
-
 
 		if (((numberEval - 1) % 1000 == 0) && numberEval > 1)
 		{

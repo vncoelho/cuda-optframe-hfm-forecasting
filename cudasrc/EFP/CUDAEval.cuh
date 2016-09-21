@@ -172,8 +172,10 @@ __host__ void initializeCudaItems(int datasize, int vForecastingSize, int* hfSiz
 
 __host__ void freeInitializeCudaItems(float** dForecastings, int** dfSize)
 {
-	cudaFree(dForecastings);
-	cudaFree(dfSize);
+	CUDA_CHECK_RETURN(cudaDeviceReset());
+	//todo -- check why cuda free cause error when recursively called by evaluator destructor
+	//cudaFree(dForecastings);
+	//cudaFree(dfSize);
 }
 
 __host__ vector<double> returnTrainingSetForecasts(CUDARep cudarep, float* dForecastings, int* dfSize, int* hfSize, int maxLag, int stepsAhead, const int aprox)

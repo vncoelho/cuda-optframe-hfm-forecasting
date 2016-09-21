@@ -20,7 +20,7 @@ FORECASTINGHORIZONMIN=" 1440
 15
 "
 
-for batch in `seq 5`
+for batch in `seq 10`
 do
 	for probl in $PS
 	do
@@ -30,14 +30,14 @@ do
 		  for i in `seq 1`
 		  do 
 		     echo "Resolvendo o problema $probl, batch $i, forecasting Horizon $fh, granularityMin 15"		
-		    ./Release/cuda-optframe-previsao $probl ./teste  15 $fh 1
+		    ./Release/cuda-optframe-previsao $probl ./teste  15 $fh 10 
 
 		     echo "Resolvendo o problema $probl, batch $i, forecasting Horizon $fh, granularityMin 30"		
-		    ./Release/cuda-optframe-previsao $probl ./teste  30 $fh 1
+		    ./Release/cuda-optframe-previsao $probl ./teste  30 $fh 10 
 
 
 		     echo "Resolvendo o problema $probl, batch $i, forecasting Horizon $fh, granularityMin 60"		
-		    ./Release/cuda-optframe-previsao $probl ./teste 60 $fh 1
+		    ./Release/cuda-optframe-previsao $probl ./teste 60 $fh 10
 
 		  done
 	  done
