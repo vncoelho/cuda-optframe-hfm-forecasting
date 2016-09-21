@@ -247,21 +247,20 @@ int APEN_SI_SpeedUp_DemandForecasting(int argc, char **argv)
 	if (argc != 5)
 	{
 		cout << "Parametros incorretos!" << endl;
-		cout << "Os parametros esperados sao: 5-SPEEDUP: 6- samplesTraining set 7-argNSA" << endl;
+		cout << "Os parametros esperados sao: instance(notused) output(notused) ; samplesTraining set; argNSA" << endl;
 		// ./REED/channel_1.dat ./UBUNTU1604 60	24	120 1000 24
 		exit(1);
 	}
 
 	const char* instance = argv[1];
 	const char* outputFile = argv[2];
-	int argSamplesTrainingSet = atoi(argv[6]);
-	int argNSA = atoi(argv[7]);
-
-	int forecastingHorizonteMinutes = argvforecastingHorizonteMinutes;
+	int argSamplesTrainingSet = atoi(argv[3]);
+	int argNSA = atoi(argv[4]);
 	string nomeOutput = outputFile;
 	string nomeInstace = instance;
+
 	//force granularity todo
-	granularityMin = 1 / 60.0; // can be used for generating instance
+	double granularityMin = 1 / 60.0; // can be used for generating instance
 
 	//===================================
 	cout << "Parametros:" << endl;
@@ -354,18 +353,16 @@ int APEN_SI_SpeedUp_DemandForecasting(int argc, char **argv)
 		cout << "#sizeTrainingSet: " << totalNumberOfSamplesTarget << endl;
 		cout << "maxNotUsed: " << problemParam.getMaxLag() << endl;
 		cout << "#StepsAhead: " << stepsAhead << endl;
-		cout << "#forecastingHorizonteMinutes: " << forecastingHorizonteMinutes << endl;
-		cout << "#granularityMin: " << granularityMin << endl << endl;
+		cout << "#granularityMin(NotUSED): " << granularityMin << endl << endl;
 
-		int timeES = argvTimeES;
-		timeES = 1200;
+		int timeES = 1200;
 		vector<double> foIndicatorCalibration;
 		vector<double> vectorOfForecasts;
 		double averageError = 0;
 		int countSlidingWindows = 0;
 
 		//SPEED UP teste
-		string speedUpFile = "./speedUpFile_SI";
+		string speedUpFile = "./apen_SI_speedUpFile";
 		FILE* fSpeedUp = fopen(speedUpFile.c_str(), "a");
 		int speedUpNTR = (nTotalForecastingsTrainningSet - maxLag) / nSA;
 		fprintf(fSpeedUp, "%d\t%d\t%d\t", nSA, nTotalForecastingsTrainningSet, speedUpNTR);

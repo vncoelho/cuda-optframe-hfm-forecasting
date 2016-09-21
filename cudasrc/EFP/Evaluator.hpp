@@ -491,8 +491,7 @@ public:
 		//Only GPU Evaluator TODO
 		if (!SPEED_UP_FLAG)
 			return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
-		cout<<"oi"<<endl;
-		getchar();
+
 
 		Timer t;
 		double timeCPUIter;
@@ -559,7 +558,7 @@ public:
 //			getchar();
 //		}
 
-//		//TODO funcEVAL
+		//TODO funcEVAL
 //		if (numberEval > 1)
 //		{
 //			string speedUpFile = "./allEvaluations";
@@ -576,7 +575,7 @@ public:
 			cout << "Average GPU: " << avgTimeGPU / (numberEval - 1) << " ms" << endl;
 			cout << "#funcEvaluations: " << numberEval << endl << endl;
 
-			string speedUpFile = "./speedUpFile_SI";
+			string speedUpFile = "./apen_SI_speedUpFile";
 			FILE* fResults = fopen(speedUpFile.c_str(), "a");
 			fprintf(fResults, "%.3f\t%.3f\t%d\t", avgTimeGPU / (numberEval - 1), avgTimeCPU / (numberEval - 1), (numberEval - 1));
 			fprintf(fResults, "\n");

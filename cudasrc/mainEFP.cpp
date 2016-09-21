@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 
 	case 1000:
 
-		r = APEN_SI_DemandForecasting(argc, argv);
+//		r = APEN_SI_DemandForecasting(argc, argv);
 		r = APEN_SI_SpeedUp_DemandForecasting(argc, argv);
 
 		cout << "Program ended successfully in MG Mode" << endl;

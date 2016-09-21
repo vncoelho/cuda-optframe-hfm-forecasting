@@ -1,9 +1,6 @@
 #!/bin/bash
 
 PS=" ./REED/channel_1.dat
-     ./REED/channel_13.dat
-     ./REED/channel_17.dat
-     ./REED/channel_9.dat
 "
 
 SAMPLESTRAININGSET="5000
@@ -38,7 +35,7 @@ do
 		  do 
 		     totalNSamples=$(($nSamples + $fh))
 		     echo "Resolvendo o problema $probl forecastingHorizon $fh and number of samples $nSamples"		
-		    ./Release/cuda-optframe-previsao $probl ./teste  15 60 10 $totalNSamples $fh
+		    ./Release/cuda-optframe-previsao $probl ./teste $totalNSamples $fh
 	       
 		  done
 	  done
