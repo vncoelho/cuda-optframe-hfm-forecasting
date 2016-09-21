@@ -103,9 +103,9 @@ int main(int argc, char **argv)
 		break;
 
 	case 1000:
-//		r = rew2016CUDADemandForecasting(argc, argv);
+
 		r = APEN_SI_DemandForecasting(argc, argv);
-//		r = APEN_SI_SpeedUp_DemandForecasting(argc, argv);
+		r = APEN_SI_SpeedUp_DemandForecasting(argc, argv);
 
 		cout << "Program ended successfully in MG Mode" << endl;
 		return r;
