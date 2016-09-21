@@ -486,7 +486,7 @@ public:
 	{
 		int maxLag = problemParam.getMaxLag();
 		//Only GPU Evaluator TODO
-//		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
+		return gpuTrainingSetForecasts(rep, maxLag, stepsAhead, aprox, dForecastings, dfSize, hfSize, datasize, hForecastings);
 
 
 		Timer t;

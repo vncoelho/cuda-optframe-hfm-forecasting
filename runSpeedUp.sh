@@ -27,21 +27,22 @@ FORECASTINGHORIZONMIN=" 1
 7200
 "
 
-for i in `seq 30`
-for probl in $PS
+for batch in `seq 5`
 do
-	for fh in $FORECASTINGHORIZONMIN
+	for probl in $PS
 	do
+		for fh in $FORECASTINGHORIZONMIN
+		do
 	
-	  for nSamples in $SAMPLESTRAININGSET
-	  do 
-	     totalNSamples=$(($nSamples + $fh))
-             echo "Resolvendo o problema $probl forecastingHorizon $fh and number of samples $nSamples"		
-	    ./Release/cuda-optframe-previsao $probl ./teste  15 60 10 $totalNSamples $fh
-       
+		  for nSamples in $SAMPLESTRAININGSET
+		  do 
+		     totalNSamples=$(($nSamples + $fh))
+		     echo "Resolvendo o problema $probl forecastingHorizon $fh and number of samples $nSamples"		
+		    ./Release/cuda-optframe-previsao $probl ./teste  15 60 10 $totalNSamples $fh
+	       
+		  done
 	  done
-  done
-done
+	done
 done
 
 
