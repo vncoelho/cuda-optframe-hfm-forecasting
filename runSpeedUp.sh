@@ -27,7 +27,7 @@ FORECASTINGHORIZONMIN=" 1
 7200
 "
 
-
+for i in `seq 30`
 for probl in $PS
 do
 	for fh in $FORECASTINGHORIZONMIN
@@ -41,6 +41,7 @@ do
        
 	  done
   done
+done
 done
 
 
